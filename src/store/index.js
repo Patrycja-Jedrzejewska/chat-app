@@ -4,6 +4,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  signInWithPopup, 
+  GoogleAuthProvider
 } from "firebase/auth";
 import router from "../router";
 
@@ -50,6 +52,17 @@ export const useUserStore = defineStore("UserStore", {
         }
       }
       this.user = auth.currentUser;
+    },
+    async GoogleLogin(){
+        const provider = new GoogleAuthProvider();
+        signInWithPopup(auth, provider)
+            .then(()=>{
+                router.push("/");
+            })
+            .catch((err)=>{
+                throw new Error(err)
+            })  
+        this.user = auth.currentUser;
     },
     async logout() {
       await signOut(auth);

@@ -38,6 +38,13 @@
         >
           Sign in
         </button>
+        <!-- Google button -->
+        <button
+          class="btn btn--google"
+          @click="GoogleSignIn"
+        >
+          Google Sign in
+        </button>
         <!-- Register button -->
         <div class="form__link form__link--register">
           <p>
@@ -78,7 +85,12 @@
           error.value = err;
         }
       };
-      return { login, email, password, error, errors, store };
+
+      const GoogleSignIn=()=>{
+        store.GoogleLogin()
+      }
+
+      return { login, email, password, error, errors, store, GoogleSignIn };
     },
   };
 </script>
