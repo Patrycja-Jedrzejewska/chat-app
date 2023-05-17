@@ -2,56 +2,62 @@
     <div>
       <div class="card">
         <form class="form" @submit.prevent="register">
-          <h1 class="headline">Register</h1>
+          <h1 class="form__headline">Register</h1>
           <!-- Email input -->
-          <section class="form__group">
-            <label for="email">Email address</label>
+          <section class="form-floating form__group">
             <input
-              type="text"
+              type="email"
               autocomplete="email"
+              placeholder="name@example.com"
               required
               id="email"
+              v-bind:class="{ 'is-invalid': $v.email.$error }"
               v-model="email"
               @keyup="$v.email.$touch()"
-              class="form__input form__input--email"
+              class="form-control form__input form__input--email"
             />
-            <div v-if="$v.email.$error" class="form__error">{{ $v.email.$errors[0].$message }}</div>
+            <label for="email" class="form-label form__label">Email address</label>
+            <div v-if="$v.email.$error" class="invalid-feedback form__error">{{ $v.email.$errors[0].$message }}</div>
           </section>
           <!-- Password input -->
-          <section class="form__group">
-            <label for="password">Password</label>
+          <section class="form-floating form__group">
             <input
               type="password"
               autocomplete="new-password"
+              placeholder="Password"
               id="password"
+              v-bind:class="{ 'is-invalid': $v.password.$error }"
               v-model="password"
               @keyup="$v.password.$touch()"
-              class="form__input form__input--password"
+              class="form-control form__input form__input--password"
             />
-            <div v-if="$v.password.$error" class="form__error">{{ $v.password.$errors[0].$message }}</div>
+            <label for="password" class="form__label">Password</label>
+            <div v-if="$v.password.$error" class="invalid-feedback form__error">{{ $v.password.$errors[0].$message }}</div>
           </section>
           <!-- Password check -->
-          <section class="form__group">
-            <label for="cPassword">Confirm Password</label>
+          <section class="form-floating form__group">
             <input
               type="password"
               autocomplete="off"
+              placeholder="Confirm password"
               required
               id="cPassword"
+              v-bind:class="{ 'is-invalid': $v.cPassword.$error }"
               v-model="cPassword"
               @keyup="$v.cPassword.$touch()"
-              class="form__input form__input--cPassword"
+              class="form-control form__input form__input--cPassword"
             />
-            <div v-if="$v.cPassword.$error || email_valid" class="form__error">{{ $v.cPassword.$errors[0].$message }} {{ email.valid }}</div>
+            <label for="cPassword" class="form__label">Confirm Password</label>
+            <div v-if="$v.cPassword.$error" class="invalid-feedback form__error">{{ $v.cPassword.$errors[0].$message }}</div>
           </section>
           <section class="form__group">
-            <div v-if="error" class="form__error">{{ error.message }}</div>
+            <div v-if="error" class="alert alert-danger form__alert">{{ error.message }}</div>
           </section>
           <!-- Submit button -->
           <button
             type="submit"
             :disabled="$v.$invalid"
-            class="btn btn--submit"
+            class="btn btn-primary btn--submit"
           >
             Sign up
           </button>
@@ -96,7 +102,7 @@
                     sameAs: helpers.withMessage(`Passwords don't match. Please enter the same password in both password fields`, sameAs(password)) 
                 },
             }))
-        const $v = useVuelidate(rules, { email, password,cPassword })
+        const $v = useVuelidate(rules, { email, password, cPassword })
 
         const register = async () =>{
             error.value = null;
