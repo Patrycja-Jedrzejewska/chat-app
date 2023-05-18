@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="form-wrapper">
       <div class="form-card">
         <form class="form" @submit.prevent="register">
           <h1 class="form__headline">Register</h1>

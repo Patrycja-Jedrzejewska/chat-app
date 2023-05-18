@@ -1,5 +1,5 @@
 <template>
-  
+  <div class="form-wrapper">
     <div class="form-card">
       <form class="form" @submit.prevent="login">
         <h1 class="form__headline">Log in</h1>
@@ -66,7 +66,8 @@
         </section>
       </form>
     </div>
-  </template>
+  </div>
+</template>
 <script>
   import { ref, computed } from "vue";
   import { useUserStore } from "../store/index.js";
