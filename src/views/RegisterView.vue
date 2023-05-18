@@ -57,7 +57,7 @@
           <button
             type="submit"
             :disabled="$v.$invalid"
-            class="btn btn-primary btn--submit"
+            class="btn-primary btn btn--submit"
           >
             Sign up
           </button>

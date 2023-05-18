@@ -4,8 +4,119 @@
 @import url(theme.light.css) (prefers-color-scheme: light);
 @import url(theme.dark.css) (prefers-color-scheme: dark);
 
-
 $primary-color: #00A9A5;
 $secondary-color: #005B5E;
 $tertiary-color: #FFA17A;
-$neutral-color: #959088;
+$neutral-color: #fff8f0;
+
+#app{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: $neutral-color;
+}
+
+.card{
+    display: flex;
+    text-align: center;
+    align-items: center;
+    width: 400px;
+    padding: 30px 20px 20px 20px;
+    background-color: #ffff;
+    box-shadow: 0 0 0.5rem rgba(0, 91, 94, 0.25);
+    
+    .form{
+        &__headline{
+            margin: 20px 20px 50px 20px;
+        }
+        &__group{
+            margin: 10px;
+
+            &--buttons{
+                margin-top: 10px;
+                .divider{
+                    text-align: center;
+                    margin-top: 30px;
+                    margin-bottom: 30px;
+                    margin-left: 10%;
+                    margin-right: 10%;
+                    width: 80%;
+                }
+            }
+        }
+        &__input{
+            width: 320px;
+            &:focus{
+                box-shadow: 0 0 0 0.25rem rgba(0, 91, 94, 0.25);
+            }
+            
+        }
+        &__error{
+            width: 300px;
+            color: #de3730;
+            text-align: left;
+        }
+
+        .btn{
+            width: 320px;
+            border: none;
+            border-radius: 45px;
+            &:hover{
+                box-shadow: 0 0 0.5rem 0.1rem rgba(0, 91, 94, 0.25);
+
+            }
+            &--submit{
+                margin-top: 30px;
+                background-color: $primary-color;
+                &:disabled{
+                    background-color: #00a29e;
+                }
+            }
+            &--google{
+                margin-bottom: 15px;
+                background-color: $secondary-color;
+                &:hover{
+                    box-shadow: 0 0 0.5rem 0.1rem rgba(0, 55, 57, 0.4);
+                } 
+            }
+        }
+        &__link{
+            margin-top: 40px;
+            margin-bottom: 0;
+            .link{
+                color: #005c5f;
+                &:hover{
+                    color: #004345;
+                }
+            }
+        }
+
+    }
+}
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+    
+    
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+    
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+    
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+    
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {
+    
+}

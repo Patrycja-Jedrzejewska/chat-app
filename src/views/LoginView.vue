@@ -1,4 +1,5 @@
 <template>
+  
     <div class="card">
       <form class="form" @submit.prevent="login">
         <h1 class="form__headline">Log in</h1>
@@ -37,25 +38,32 @@
         <section class="form__group">
           <div v-if="error" class="alert alert-danger form__alert">{{ error.message }}</div>
         </section>
-        <!-- Submit button -->
-        <button
-          type="submit"
-          :disabled="$v.$invalid"
-          class="btn btn-primary btn--submit"
-        >
-          Sign in
-        </button>
-        <!-- Google button -->
-        <button class="btn btn-primary btn--google" style="background-color: #dd4b39;" @click="GoogleSignIn"
-             ><i class="fab fa-google me-2"></i> Sign in with google</button>
+        <section class="form__group form__group--buttons">
+          <!-- Submit button -->
+          <button
+            type="submit"
+            :disabled="$v.$invalid"
+            class="btn-primary btn btn--submit"
+          >
+            Sign in
+          </button>
 
-        <!-- Register button -->
-        <div class="form__link form__link--register">
-          <p>
-            Not a member?
-            <router-link to="/register" class="link">Register</router-link>
-          </p>
-        </div>
+          <div class="divider">
+            <hr class="hr" />
+          </div>
+        
+          <!-- Google button -->
+          <button class="btn-primary btn btn--google" @click="GoogleSignIn"
+            ><i class="fab fa-google me-2"></i> Sign in with google</button>
+
+          <!-- Register button -->
+          <div class="form__link form__link--register">
+            <p>
+              Not a member?
+              <router-link to="/register" class="link">Register</router-link>
+            </p>
+          </div>
+        </section>
       </form>
     </div>
   </template>
