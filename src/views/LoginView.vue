@@ -1,6 +1,6 @@
 <template>
   
-    <div class="card">
+    <div class="form-card">
       <form class="form" @submit.prevent="login">
         <h1 class="form__headline">Log in</h1>
         <!-- Email input -->

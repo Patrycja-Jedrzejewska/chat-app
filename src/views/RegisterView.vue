@@ -1,6 +1,6 @@
 <template>
     <div>
-      <div class="card">
+      <div class="form-card">
         <form class="form" @submit.prevent="register">
           <h1 class="form__headline">Register</h1>
           <!-- Email input -->
