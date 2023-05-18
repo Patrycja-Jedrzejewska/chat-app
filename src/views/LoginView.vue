@@ -1,56 +1,78 @@
 <template>
-    <div class="card">
+  <div class="form-wrapper">
+    <div class="form-card">
       <form class="form" @submit.prevent="login">
-        <h1 class="headline">Log in</h1>
+        <h1 class="form__headline">Log in</h1>
         <!-- Email input -->
-        <section class="form__group">
-          <label for="email" class="form__label">Email address</label>
+        <section class="form-floating form__group">
           <input
-            type="text"
+            type="email"
             autocomplete="email"
+            placeholder="name@example.com"
             required
             id="email"
+            v-bind:class="{ 'is-invalid': $v.email.$error }" 
             v-model="email"
-            class="form__input form__input--email"
+            @keyup="$v.email.$touch()"
+            class="form-control form__input form__input--email"
           />
-          <div v-if="errors.email" class="form__error">{{ errors.email }}</div>
+          <label for="email" class="form-label form__label">Email address</label>
+          <div v-if="$v.email.$error" class="invalid-feedback form__error">{{ $v.email.$errors[0].$message }}</div>
         </section>
         <!-- Password input -->
-        <section class="form__group">
-          <label for="password" class="form__label">Password</label>
+        <section class="form-floating form__group">
           <input
             type="password"
             autocomplete="current-password"
             required
             id="password"
+            v-bind:class="{ 'is-invalid': $v.password.$error }"
+            placeholder="Password"
             v-model="password"
-            class="form__input form__input--password"
+            @keyup="$v.password.$touch()"
+            class="form-control form__input form__input--password"
           />
-          <div v-if="errors.password" class="form__error">{{ errors.password }}</div>
+          <label for="password" class="form__label">Password</label>
+          <div v-if="$v.password.$error" class="invalid-feedback form__error">{{ $v.password.$errors[0].$message }}</div>
         </section>
         <section class="form__group">
-          <div v-if="error" class="form__error">{{ error.message }}</div>
+          <div v-if="error" class="alert alert-danger form__alert">{{ error.message }}</div>
         </section>
-        <!-- Submit button -->
-        <button
-          type="submit"
-          class="btn btn--submit"
-        >
-          Sign in
-        </button>
-        <!-- Register button -->
-        <div class="form__link form__link--register">
-          <p>
-            Not a member?
-            <router-link to="/register" class="link">Register</router-link>
-          </p>
-        </div>
+        <section class="form__group form__group--buttons">
+          <!-- Submit button -->
+          <button
+            type="submit"
+            :disabled="$v.$invalid"
+            class="btn-primary btn btn--submit"
+          >
+            Sign in
+          </button>
+
+          <div class="divider">
+            <hr class="hr" />
+          </div>
+        
+          <!-- Google button -->
+          <button class="btn-primary btn btn--google" @click="GoogleSignIn"
+            ><i class="fab fa-google me-2"></i> Sign in with google</button>
+
+          <!-- Register button -->
+          <div class="form__link form__link--register">
+            <p>
+              Not a member?
+              <router-link to="/register" class="link">Register</router-link>
+            </p>
+          </div>
+        </section>
       </form>
     </div>
-  </template>
+  </div>
+</template>
 <script>
-  import { ref } from "vue";
+  import { ref, computed } from "vue";
   import { useUserStore } from "../store/index.js";
+  import { useVuelidate } from '@vuelidate/core'
+  import { required } from '@vuelidate/validators'
   export default {
     name: "LoginView",
     setup() {
@@ -58,30 +80,33 @@
       const password = ref("");
       const store = useUserStore();
       const error = ref(null);
-      const errors = ref({});
 
-      const login = async () => {
-        errors.value = {};
+      const rules = computed(() => ({
+        email: {
+          required,
+        },
+        password: {
+          required,
+        },
+      }))
+      const $v = useVuelidate(rules, { email, password })
+
+      const login = async () =>{
         error.value = null;
-        if (!email.value) {
-          errors.value.email = 'Email is required';
-        }
-        if (!password.value) {
-          errors.value.password = 'Password is required';
-        }
-        if (Object.keys(errors.value).length) {
-          return;
-        }
-        try {
+        try{
           await store.login(email.value, password.value);
-        } catch (err) {
-          error.value = err;
+        }catch(err){
+          error.value=err;
         }
-      };
-      return { login, email, password, error, errors, store };
+      }
+
+      const GoogleSignIn=()=>{
+        store.GoogleLogin()
+      }
+
+      return { login, email, password, error, store, GoogleSignIn, $v };
     },
   };
 </script>
 <style scoped lang="scss">
-
 </style>
