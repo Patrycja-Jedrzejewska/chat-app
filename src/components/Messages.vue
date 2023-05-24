@@ -1,8 +1,9 @@
 <template>
-    <Message v-for="message in messages" :key="message.id" :message="message" />
+    <div class="messages" v-if="messages.length>0">
+        <Message v-for="message in messages" :key="message.id" :message="message" />
+    </div>
 </template>
 <script >
-
 import { ref, onMounted } from 'vue'
 import { getMessages } from '../chat/index'
 import Message from './Message.vue'
