@@ -3,11 +3,12 @@ import 'firebase/firestore'
 import { db } from "../firebase/index"
     
     export const sendMessage = async(user, newMessage)=>{
+        
         const messageInfo={
             'userID': user.value.uid,
             'displayName': user.value.displayName,
             'text': newMessage.value,
-            'createdAt': Timestamp.fromDate(new Date(Date.now()))
+            'createdAt': Timestamp.fromDate(new Date(Date.now())),
         }
         await addDoc(collection(db,'messages'),messageInfo)
         newMessage.value=''
@@ -19,7 +20,7 @@ import { db } from "../firebase/index"
                 messages.value = snapshot.docs.map( doc => ({
                     id: doc.id,
                     ...doc.data(),
-                    createdAt: formatTimestamp(doc.data().createdAt)
+                    createdAt: formatTimestamp(doc.data().createdAt),
                 }))
             })
     }

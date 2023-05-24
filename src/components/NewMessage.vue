@@ -11,8 +11,9 @@ import { sendMessage } from '../chat/index'
 
 export default{
     setup(){
-        const user=ref(auth.currentUser)
-        const newMessage=ref('')
+        const user = ref(auth.currentUser)
+        const newMessage = ref('')
+        
         return{
             user,
             newMessage,

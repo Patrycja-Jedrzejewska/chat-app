@@ -10,9 +10,9 @@ import Message from './Message.vue'
 export default{
     components: { Message },
     setup(){
-        const messages=ref([])
+        const messages = ref([])
 
-        onMounted(()=>{
+        onMounted(() => {
             getMessages(messages)
         })
         return{
