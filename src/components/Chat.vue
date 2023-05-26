@@ -1,6 +1,6 @@
 <template>
     <div class="chat">
-<div class="chat__messages">
+        <div class="chat__messages">
             <Messages :contactId="contactId"/>
         </div>
         <div class="chat__new-message">
@@ -29,5 +29,21 @@ export default defineComponent({
 });
 </script>
 <style scoped lang="scss">
-
+    .chat{
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+        &__messages{
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+            }
+        &__new-message{
+            position: sticky;
+            bottom: 0;
+            background-color: #f7f7f7;
+            padding: 10px;
+       }
+    }
 </style>

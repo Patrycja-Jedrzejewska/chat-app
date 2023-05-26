@@ -1,9 +1,9 @@
 <template>
     <div class="message" :class="[ isCurrentUser ? 'message--current-user' : 'message--another-user' ]">
-        <div class="message__avatar">
+        <div v-if="!isCurrentUser" class="message__avatar">
             <Avatar :color="user.color" :initial="user.initial" />
         </div>
-        <div class="message__author" >{{ user.displayName }}</div>
+        <div v-if="!isCurrentUser" class="message__author" >{{ user.displayName }}</div>
         <div class="message__text" >{{ message.text }}</div>
         <div class="message__date">{{ message.createdAt }}</div>
     </div>

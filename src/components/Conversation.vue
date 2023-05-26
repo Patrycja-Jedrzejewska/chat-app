@@ -1,6 +1,8 @@
 <template>
-    <h3>Konwersacja z użytkownikiem: {{ contactDisplayName }}</h3>
-    <Chat :contactId="contactId"/>
+    <h3 class="conversation__title">Konwersacja z użytkownikiem: {{ contactDisplayName }}</h3>
+    <div class="chat">
+        <Chat :contactId="contactId"/>
+    </div>
 </template>
 <script>
 import { useUserStore } from '../store';
@@ -25,5 +27,14 @@ export default defineComponent({
 });
 </script>
 <style scoped lang="scss">
-
+.conversation__title{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    flex-wrap: wrap;
+    width: 100%;
+}
+.chat{
+    display: flex;
+}
 </style>
