@@ -1,40 +1,61 @@
 <template>
     <div class="message" :class="[ isCurrentUser ? 'message--current-user' : 'message--another-user' ]">
         <div class="message__avatar">
-            <Avatar :color="message.color" :initial="message.initial" />
+            <Avatar :color="user.color" :initial="user.initial" />
         </div>
-        <div class="message__author" v-if="!isCurrentUser" >{{ message.displayName }}</div>
+        <div class="message__author" >{{ user.displayName }}</div>
         <div class="message__text" >{{ message.text }}</div>
         <div class="message__date">{{ message.createdAt }}</div>
     </div>
+    
 </template>
 <script>
-import Avatar from './Avatar.vue'
+import { ref, computed } from 'vue';
 import { auth } from '../firebase/index'
+import Avatar from './Avatar.vue'
+import { useUserStore } from '../store';
 export default {
     components: {
         Avatar,
     },
-    props:{
-        message:{
+    props: {
+        message: {
             type: Object,
-            required: true
-        }
-    },
-    computed: {
-        isCurrentUser() {
-            const currentUser = auth.currentUser;
-            return currentUser.uid == this.message.userID
+            required: true,
         },
     },
-    setup(props){
-        function getUserById(userID){
-            return props.users.find((user) => user.id ===userID) || null
-        }
-        return{
-            getUserById
-        }
-    }
+    setup(props) {
+        const userStore = useUserStore();
+        const user = ref({
+            displayName: '',
+            color: '',
+            initial: '',
+        });
+
+        const fetchUserDetails = async () => {
+            await userStore.fetchContactDetails([props.message.senderId]);
+            const foundUser = userStore.users.find((user) => user.id === props.message.senderId);
+            if (foundUser) {
+                user.value = {
+                    displayName: foundUser.displayName,
+                    color: foundUser.color,
+                    initial: foundUser.initial,
+                };
+            }
+        };
+
+        fetchUserDetails();
+
+        const currentUser = computed(() => {
+            const currentUser = auth.currentUser;
+            return currentUser && currentUser.uid === props.message.senderId;
+        });
+
+        return {
+            user,
+            isCurrentUser: currentUser,
+        };
+    },
 }
 </script>
 <style scoped lang="scss">

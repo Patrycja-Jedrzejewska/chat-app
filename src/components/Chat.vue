@@ -6,13 +6,6 @@
         <div class="chat__new-message">
             <NewMessage :contactId="contactId"/>
         </div>
-<!--
-
-        <h3>Chat with {{ contact.displayName }}</h3>
-        
-
-
-        -->
     </div>
 </template>
 <script>
@@ -27,9 +20,13 @@ export default defineComponent({
     Messages,
     NewMessage,
   },
-  props: ['contactId'],
-  }
-);
+  props: {
+    contactId: {
+      type: String,
+      required: true,
+    },
+  },
+});
 </script>
 <style scoped lang="scss">
 

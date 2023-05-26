@@ -145,6 +145,8 @@ export const useUserStore = defineStore("UserStore", {
             id: contactId,
             displayName: userData.displayName,
             email: userData.email,
+            color: userData.color,
+            initial: userData.initial
             };
             userDetails.push(userDetail);
         }

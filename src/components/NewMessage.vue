@@ -11,14 +11,22 @@ import { sendMessage } from '../chat/index'
 import { useUserStore } from '../store'
 
 export default{
-    props: ['contactId'],
+    props: {
+    contactId: {
+      type: String,
+      required: true,
+    },
+  },
   setup(props) {
     const userStore = useUserStore();
     const user = ref(auth.currentUser);
     const newMessage = ref('');
 
     const sendNewMessage = () => {
-      sendMessage(user, newMessage, props.contactId);
+      if (newMessage.value.trim() !== '') {
+        sendMessage(user, newMessage, props.contactId);
+        newMessage.value = '';
+      }
     };
 
     return {
