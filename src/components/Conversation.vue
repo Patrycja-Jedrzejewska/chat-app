@@ -1,21 +1,26 @@
 <template>
+    <h3>Konwersacja z użytkownikiem: {{ contactDisplayName }}</h3>
     <Chat :contactId="contactId"/>
 </template>
 <script>
-import { defineComponent, ref } from 'vue';
+import { useUserStore } from '../store';
+import { defineComponent, ref, onMounted, computed } from 'vue';
+import router from '../router';
 import Chat from '../components/Chat.vue'
 export default defineComponent({
   name: 'Conversation',
   components: {
     Chat,
   },
-  data() {
-    return {
-      contactId: null,
-    };
-  },
-  created() {
-    this.contactId = this.$route.params.contactId;
+  computed: {
+    contactId() {
+      return this.$route.params.contactId;
+    },
+    contactDisplayName() {
+      const userStore = useUserStore();
+      const user = userStore.users.find(user => user.id === this.contactId);
+      return user ? user.displayName : '';
+    },
   },
 });
 </script>
