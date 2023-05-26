@@ -1,4 +1,4 @@
-import { addDoc, collection, query,orderBy, onSnapshot, Timestamp } from 'firebase/firestore'
+import { addDoc, collection, query, where,orderBy, onSnapshot, Timestamp } from 'firebase/firestore'
 import 'firebase/firestore'
 import { db } from "../firebase/index"
 import {  generateInitial, generateRandomColor } from '../utilities/avatar'
@@ -24,7 +24,7 @@ import {  generateInitial, generateRandomColor } from '../utilities/avatar'
         }
     }
 
-    export const sendMessage = async(user, newMessage)=>{
+    export const sendMessage = async(user, newMessage, contactId)=>{
         if(!user.value.displayName){
             user.value.displayName=user.value.email.split('@')[0]
         }
@@ -36,15 +36,17 @@ import {  generateInitial, generateRandomColor } from '../utilities/avatar'
             'text': newMessage.value,
             'createdAt': Timestamp.fromDate(new Date(Date.now())),
             'color': userColor,
-            'initial': userInitial
+            'initial': userInitial,
+            'contactId': contactId,
         }
         await addDoc(collection(db,'messages'),messageInfo)
         newMessage.value=''
     }
 
-    export const getMessages = (messages) => {
+    export const getMessages = (messages, contactId) => {
         const messagesQuery = query(collection(db, 'messages'), orderBy('createdAt'))
-        const unsubscribe = onSnapshot(messagesQuery, snapshot =>{
+        const filteredMessagesQuery = query(messagesQuery, where('contactId', '==', contactId));
+        const unsubscribe = onSnapshot(filteredMessagesQuery, snapshot =>{
             messages.value = snapshot.docs.map( doc => ({
                 id: doc.id,
                 ...doc.data(),
@@ -53,6 +55,7 @@ import {  generateInitial, generateRandomColor } from '../utilities/avatar'
                 initial: doc.data().initial
             }))
         })
+        return unsubscribe
     }
     const formatTimestamp = (timestamp) => {
         const date = new Date(timestamp.seconds * 1000).toLocaleString() 

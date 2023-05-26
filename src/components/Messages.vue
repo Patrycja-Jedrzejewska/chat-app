@@ -1,24 +1,32 @@
 <template>
-    <div class="messages" v-if="messages.length>0">
-        <Message v-for="message in messages" :key="message.id" :message="message" />
+    <div class="messages" v-if="filteredMessages.length>0">
+        <Message v-for="message in filteredMessages" :key="message.id" :message="message" />
     </div>
 </template>
 <script >
-import { ref, onMounted } from 'vue'
+import { ref, watchEffect, computed } from 'vue'
+import { useUserStore } from '../store'
 import { getMessages } from '../chat/index'
 import Message from './Message.vue'
 
-export default{
-    components: { Message },
-    setup(){
-        const messages = ref([])
+export default {
+  props: ['contactId'],
+  components: { Message },
+  setup(props) {
+    const userStore = useUserStore();
+    const messages = ref([]);
 
-        onMounted(() => {
-            getMessages(messages)
-        })
-        return{
-            messages
-        }
-    }
-}
+    watchEffect(() => {
+      getMessages(messages, props.contactId);
+    });
+
+    const filteredMessages = computed(() => {
+      return messages.value.filter((message) => message.contactId === props.contactId);
+    });
+
+    return {
+      filteredMessages,
+    };
+  },
+};
 </script>
