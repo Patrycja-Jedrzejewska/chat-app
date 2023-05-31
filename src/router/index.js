@@ -4,6 +4,7 @@ import RegisterView from "../views/RegisterView.vue";
 import ChatView from "../views/ChatView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import NoAccessView from "../views/NoAccessView.vue";
+import Conversation from "../components/Conversation.vue"
 
 import { auth } from "../firebase/index";
 
@@ -24,25 +25,19 @@ const router = createRouter({
       path: "/",
       name: "ChatView",
       component: ChatView,
-      children: [
-        {
-          path: "",
-          name: "Contacts",
-          component: () => import("../components/Contacts.vue"),
-          meta: { requiresAuth: true },
-        },
-        {
-          path: "",
-          name: "Chat",
-          component: () => import("../components/Chat.vue"),
-          meta: { requiresAuth: true },
-        },
-      ],
+      meta: { requiresAuth: true }
     },
     {
       path: "/NoAccessView",
       name: "NoAccessView",
       component: NoAccessView,
+    },
+    {
+      path: '/conversation/:contactId',
+      name: 'Conversation',
+      component: Conversation,
+      props: true,
+      meta: { requiresAuth: true },
     },
     {
       path: "/:pathMatch(.*)*",
