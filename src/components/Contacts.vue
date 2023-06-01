@@ -1,49 +1,64 @@
 <template>
     <div class="contacts">
-        <ul v-if="users.length>0" class="contacts__list">
-            <li v-for="user in users" :key="user.id" class="contact">
-                <router-link :to="`/conversation/${user.id}`" class="link">
-                    <div class="contact__avatar">
-                        <Avatar :color="user.color" :initial="user.initial" />
-                    </div>
-                    <div class="contact__info">
-                        <div class="contact__info--displayName">{{ user.displayName }}</div>
-                        <div class="contact__info--email">{{ user.email }}</div>
-                    </div>
-                </router-link>
-            </li>
-        </ul>
-        <div v-else class="contacts__emptylist">Brak kontaktów</div>
+      <ul v-if="contacts.length > 0" class="contacts__list">
+        <li v-for="contact in contacts" :key="contact.id" class="contact" :class="{ 'contact--selected': contact.id === selectedContactId }">
+          <router-link :to="`/conversation/${contact.id}`" class="link">
+            <div class="contact__avatar">
+              <Avatar :color="contact.color" :initial="contact.initial" />
+            </div>
+            <div class="contact__info">
+              <div class="contact__info--displayName">{{ contact.displayName }}</div>
+              <div class="contact__info--email">{{ contact.email }}</div>
+            </div>
+          </router-link>
+        </li>
+      </ul>
+      <div v-else class="contacts__emptylist">Brak kontaktów</div>
     </div>
-</template>
+  </template>
 <script>
 import Avatar from '../components/Avatar.vue'
-import { computed, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { defineComponent } from 'vue';
 import { useUserStore } from '../store';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
-    components:{
-        Avatar
-    },
+  components: {
+    Avatar
+  },
   setup() {
     const userStore = useUserStore();
-    const users = computed(() => userStore.users);
+    const contacts = ref([]);
+    const contactsLoaded = ref(false);
+    const router = useRouter();
+    const selectedContactId = ref('');
 
     onMounted(async () => {
       await userStore.getContactIds();
       await userStore.fetchContactDetails(userStore.contacts);
+      contacts.value = [...userStore.users];
+      contactsLoaded.value = true;
+    });
+
+    router.afterEach((to) => {
+      const contactId = to.params.contactId;
+      selectedContactId.value = contactId;
     });
 
     return {
-      users,
+      contacts,
+      contactsLoaded,
+      selectedContactId
     };
   },
 });
 </script>
 <style scoped lang="scss">
 .contacts{
+    background-color: #ffffff;
     width: 100%;  
+    height: 100vh;
     @media only screen and (min-width: 600px) {
          width: 100%; 
         
@@ -66,25 +81,28 @@ export default defineComponent({
             display: flex;
             align-items: center;
             align-content: center;
-            padding: 10px;
-
+            margin: 10px;
             height: 70px;
+            padding: 5px 10px;
+            background-color: #ffffff;
+            border-radius: 20px;
 
-
+            &--selected{
+                background-color: #f98f62 !important;
+                .contact__info{
+                &--email{
+                    color: #fff;
+                }}
+            }
+            &:hover{
+                box-shadow: 0 0 0.5rem 0.1rem rgba(0, 91, 94, 0.25);
+            }
             .link{
                 display: flex;
                 align-items: center;
                 color: #005B5E;
                 text-decoration: none;
-                background-color: #FFA17A;
-                border-radius: 20px;
-                padding: 5px 10px;
                 width: 100%;
-
-                &:hover{
-                    box-shadow: 0 0 0.5rem 0.1rem rgba(0, 91, 94, 0.25);
-
-                }
             }
             &__avatar{
                 margin-right: 10px;
@@ -96,14 +114,12 @@ export default defineComponent({
 
                 &--displayName{
                     font-weight: bold;
-
+                    font-size: 17px;
                 }
                 &--email{
                     color: #00A9A5;
-
                 }
             }
-           
         }
     }
     &__emptylist{

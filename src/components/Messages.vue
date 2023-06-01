@@ -2,9 +2,10 @@
     <div class="messages" v-if="messages.length>0">
         <Message v-for="message in messages" :key="message.id" :message="message" />
     </div>
+    <div v-else>Brak wiadomości</div>
 </template>
 <script >
-import { ref, watchEffect, computed, onMounted, onUnmounted } from 'vue'
+import { ref, watch, onUnmounted } from 'vue'
 import { useUserStore } from '../store'
 import { getMessages } from '../chat/index'
 import Message from './Message.vue'
@@ -21,17 +22,32 @@ export default {
     Message,
   },
   setup(props) {
+    const userStore = useUserStore();
     const messages = ref([]);
-    let isLoaded = false;
+    let unsubscribe = null;
 
-    onMounted(() => {
-      if (!isLoaded) {
-        const unsubscribe = getMessages(auth.currentUser, messages, props.contactId);
-        onUnmounted(unsubscribe);
-        isLoaded = true;
+    const fetchMessages = async () => {
+      unsubscribe = await getMessages(auth.currentUser, messages, props.contactId);
+    };
+
+    watch(
+      () => props.contactId,
+      async () => {
+        if (unsubscribe && typeof unsubscribe === 'function') {
+          await unsubscribe(); // Anuluj poprzednią subskrypcję
+          unsubscribe = null;
+        }
+        await fetchMessages();
+      }
+    );
+
+    onUnmounted(async () => {
+      if (unsubscribe && typeof unsubscribe === 'function') {
+        await unsubscribe(); // Anuluj subskrypcję przy odmontowywaniu komponentu
       }
     });
 
+    fetchMessages();
 
     return {
       messages,

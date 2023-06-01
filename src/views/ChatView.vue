@@ -4,19 +4,20 @@
             <Contacts />
         </div>
         <div class="conversation">
-            
+            <Conversation />
         </div>
     </div>
 </template>
 <script>
 import Contacts from '../components/Contacts.vue';
 import Conversation from '../components/Conversation.vue'
+import router from '../router';
 export default {
     name: "ChatView",
     components:{
-        Contacts, 
-        Conversation
-    }
+    Contacts,
+    Conversation
+}
 };
 </script>
 <style scoped lang="scss">
@@ -25,7 +26,7 @@ export default {
     display: flex;
 }
 .conversation{
-    display:none;
+    //display:none;
     
     
     @media only screen and (min-width: 768px) {

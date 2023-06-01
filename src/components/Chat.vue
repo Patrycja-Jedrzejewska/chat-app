@@ -9,8 +9,7 @@
     </div>
 </template>
 <script>
-import { ref, watch,defineComponent } from 'vue';
-import { useUserStore } from '../store/index';
+import { defineComponent } from 'vue';
 import Messages from './Messages.vue'
 import NewMessage from './NewMessage.vue'
 

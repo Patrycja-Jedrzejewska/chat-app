@@ -5,22 +5,24 @@
     </div>
 </template>
 <script>
-import { ref } from 'vue'
+import { ref, watchEffect } from 'vue'
 import { auth } from '../firebase/index'
 import { sendMessage } from '../chat/index'
-import { useUserStore } from '../store'
 
-export default{
-    props: {
+export default {
+  props: {
     contactId: {
       type: String,
       required: true,
     },
   },
   setup(props) {
-    const userStore = useUserStore();
     const user = ref(auth.currentUser);
     const newMessage = ref('');
+
+    watchEffect(() => {
+      user.value = auth.currentUser;
+    });
 
     const sendNewMessage = () => {
       if (newMessage.value.trim() !== '') {
@@ -35,5 +37,5 @@ export default{
       sendNewMessage,
     };
   },
-}
+};
 </script>

@@ -14,6 +14,7 @@ import { ref, computed } from 'vue';
 import { auth } from '../firebase/index'
 import Avatar from './Avatar.vue'
 import { useUserStore } from '../store';
+
 export default {
     components: {
         Avatar,

@@ -1,14 +1,14 @@
 <template>
-    <h3 class="conversation__title">Konwersacja z użytkownikiem: {{ contactDisplayName }}</h3>
-    <div class="chat">
+    <div class="chat" v-if="hasContact">
         <Chat :contactId="contactId"/>
     </div>
+    <div class="empty-chat" v-else>Wybierz kontakt</div>
 </template>
 <script>
-import { useUserStore } from '../store';
-import { defineComponent, ref, onMounted, computed } from 'vue';
-import router from '../router';
+import { defineComponent, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import Chat from '../components/Chat.vue'
+
 export default defineComponent({
   name: 'Conversation',
   components: {
@@ -18,11 +18,20 @@ export default defineComponent({
     contactId() {
       return this.$route.params.contactId;
     },
-    contactDisplayName() {
-      const userStore = useUserStore();
-      const user = userStore.users.find(user => user.id === this.contactId);
-      return user ? user.displayName : '';
+    
+    hasContact() {
+      return !!this.contactId;
     },
+  },
+  setup() {
+    const router = useRouter();
+
+    watch(
+      () => router.currentRoute.value.params.contactId,
+      (newContactId) => {
+        router.replace({ params: { contactId: newContactId } });
+      }
+    );
   },
 });
 </script>

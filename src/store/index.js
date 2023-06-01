@@ -13,12 +13,7 @@ import { getDoc,
     setDoc,
     doc,
     updateDoc,
-    collection,
-    query,
-    where,
-    orderBy,
-    onSnapshot,
-    Timestamp 
+    collection
 } from 'firebase/firestore'
 import {  generateInitial, generateRandomColor } from '../utilities/avatar'
 
@@ -142,11 +137,11 @@ export const useUserStore = defineStore("UserStore", {
 
         if (userData) {
             const userDetail = {
-            id: contactId,
-            displayName: userData.displayName,
-            email: userData.email,
-            color: userData.color,
-            initial: userData.initial
+                id: contactId,
+                displayName: userData.displayName,
+                email: userData.email,
+                color: userData.color,
+                initial: userData.initial
             };
             userDetails.push(userDetail);
         }
