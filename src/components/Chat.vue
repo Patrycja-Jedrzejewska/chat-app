@@ -31,8 +31,9 @@ export default defineComponent({
     .chat{
         display: flex;
         flex-direction: column;
-        height: 100%;
-        width: 100%;
+        height: 100vh;
+
+        
         &__messages{
             flex-grow: 1;
             overflow-y: auto;
@@ -41,8 +42,6 @@ export default defineComponent({
         &__new-message{
             position: sticky;
             bottom: 0;
-            background-color: #f7f7f7;
-            padding: 10px;
        }
     }
 </style>

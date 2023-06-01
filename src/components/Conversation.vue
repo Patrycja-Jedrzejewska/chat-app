@@ -2,7 +2,7 @@
     <div class="chat" v-if="hasContact">
         <Chat :contactId="contactId"/>
     </div>
-    <div class="empty-chat" v-else>Wybierz kontakt</div>
+    <div class="empty-chat" v-else></div>
 </template>
 <script>
 import { defineComponent, watch } from 'vue';
@@ -18,7 +18,6 @@ export default defineComponent({
     contactId() {
       return this.$route.params.contactId;
     },
-    
     hasContact() {
       return !!this.contactId;
     },
@@ -36,14 +35,7 @@ export default defineComponent({
 });
 </script>
 <style scoped lang="scss">
-.conversation__title{
-    display: flex;
-    justify-content: center;
-    text-align: center;
-    flex-wrap: wrap;
-    width: 100%;
-}
 .chat{
-    display: flex;
+    width: 100%;
 }
 </style>

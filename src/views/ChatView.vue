@@ -22,18 +22,19 @@ export default {
 </script>
 <style scoped lang="scss">
 .chatview{
-    width: 100%;
     display: flex;
 }
 .conversation{
     //display:none;
     
-    
+    display: flex;
+    width: 100%;
     @media only screen and (min-width: 768px) {
     
     }
 }
 .contacts{
+    flex-basis: 360px;
      display: flex;
      @media only screen and (min-width: 768px) {
         

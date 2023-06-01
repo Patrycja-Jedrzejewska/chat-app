@@ -10,6 +10,7 @@ import { useUserStore } from '../store'
 import { getMessages } from '../chat/index'
 import Message from './Message.vue'
 import { auth } from '../firebase/index'
+import { scrollToBottom } from '../utilities/scroll'
 
 export default {
   props: {
@@ -28,13 +29,14 @@ export default {
 
     const fetchMessages = async () => {
       unsubscribe = await getMessages(auth.currentUser, messages, props.contactId);
+      scrollToBottom()
     };
 
     watch(
       () => props.contactId,
       async () => {
         if (unsubscribe && typeof unsubscribe === 'function') {
-          await unsubscribe(); // Anuluj poprzednią subskrypcję
+          await unsubscribe(); 
           unsubscribe = null;
         }
         await fetchMessages();

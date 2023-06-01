@@ -57,8 +57,6 @@ export default defineComponent({
 <style scoped lang="scss">
 .contacts{
     background-color: #ffffff;
-    width: 100%;  
-    height: 100vh;
     @media only screen and (min-width: 600px) {
          width: 100%; 
         
