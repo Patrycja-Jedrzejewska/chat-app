@@ -1,7 +1,11 @@
 <template>
     <div class="contacts">
-      <ul v-if="contacts.length > 0" class="contacts__list">
-        <li v-for="contact in contacts" :key="contact.id" class="contact" :class="{ 'contact--selected': contact.id === selectedContactId }">
+      <div class="contacts__search">
+        <img src="../assets/search-icon.svg" alt="Search icon" class="search__icon">
+        <input v-model="searchText" type="text" placeholder="Search contact" class="search__input"/>
+      </div>
+      <ul v-if="filteredContacts.length > 0" class="contacts__list">
+        <li v-for="contact in filteredContacts" :key="contact.id" class="contact" :class="{ 'contact--selected': contact.id === selectedContactId }">
           <router-link :to="`/conversation/${contact.id}`" class="link">
             <div class="contact__avatar">
               <Avatar :color="contact.color" :initial="contact.initial" />
@@ -18,7 +22,7 @@
   </template>
 <script>
 import Avatar from '../components/Avatar.vue'
-import { onMounted, ref, getCurrentInstance  } from 'vue';
+import { onMounted, ref, computed, getCurrentInstance  } from 'vue';
 import { defineComponent } from 'vue';
 import { useUserStore } from '../store';
 import { useRouter } from 'vue-router';
@@ -34,6 +38,7 @@ export default defineComponent({
     const router = useRouter();
     const selectedContactId = ref('');
     const { emit } = getCurrentInstance();
+    const searchText = ref('');
 
     onMounted(async () => {
       await userStore.getContactIds();
@@ -41,6 +46,20 @@ export default defineComponent({
       contacts.value = [...userStore.users];
       contactsLoaded.value = true;
     });
+
+    const filteredContacts = computed(() => {
+      if (!searchText.value) {
+        return contacts.value;
+      } else {
+        const lowerCaseSearchText = searchText.value.toLowerCase();
+        return contacts.value.filter((contact) => {
+          const displayName = contact.displayName.toLowerCase();
+          const email = contact.email.toLowerCase();
+          return displayName.includes(lowerCaseSearchText) || email.includes(lowerCaseSearchText);
+        });
+      }
+    });
+
     const emitSelectedContact =()=>{
         emit('selected-contact', selectedContactId.value);
     }
@@ -51,38 +70,65 @@ export default defineComponent({
     });
    
     return {
-      contacts,
-      contactsLoaded,
       selectedContactId,
+      searchText,
+      filteredContacts,
     };
   },
 });
 </script>
 <style scoped lang="scss">
 .contacts{
+    display: flex;
+    flex-direction: column;
     background-color: #ffffff;
+    overflow-y: auto;
     @media only screen and (min-width: 600px) {
          width: 100%; 
-        
     }
-        
-        /* Medium devices (landscape tablets, 768px and up) */
-    @media only screen and (min-width: 768px) {
+    &__search{
+        display: flex;
+        align-self: center;
+        margin-top: 15px;
+        margin-bottom: 5px;
+        border-radius: 45px;
+        height: 35px;
+        width: 300px;
+        background-color: #00A9A5;
+        .search{
+            &__input{
+                width: 220px;
+                margin-left: 20px;
+                background-color: #00A9A5;
+                border-style: none;
+                color: #fff;
+                &::placeholder{
+                    color: #fff;
+                }
+                &:focus{
+                    outline:none;
+                }
+            }
             
-            
+            &__icon{
+                width: 25px;
+                margin-left: 10px;
+                
+            }
+        }
     }
-    overflow-y: auto;
+    
     &__list{
         
         list-style: none;
         padding-left: 5px;
         padding-right: 5px;
-        margin-top: 20px; 
+        margin-top: 0px; 
         .contact{
             display: flex;
             align-items: center;
             align-content: center;
-            margin: 10px;
+            margin: 5px 15px;
             height: 70px;
             padding: 5px 10px;
             background-color: #ffffff;
