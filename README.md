@@ -12,7 +12,7 @@ The aim was to create the Vue application with real time chat. Project includes 
 * Sass
 * Firebase
 * Vite
-* Pinia
+* Pinia :)
 
 ## Features
 
