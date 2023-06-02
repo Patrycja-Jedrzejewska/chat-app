@@ -22,22 +22,23 @@ const router = createRouter({
       component: RegisterView,
     },
     {
-      path: "/",
-      name: "ChatView",
+      path: '/',
+      name: 'ChatView',
       component: ChatView,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: 'conversation/:contactId',
+          name: 'Conversation',
+          component: Conversation,
+          props: true,
+        },
+      ],
     },
     {
       path: "/NoAccessView",
       name: "NoAccessView",
       component: NoAccessView,
-    },
-    {
-      path: '/conversation/:contactId',
-      name: 'Conversation',
-      component: Conversation,
-      props: true,
-      meta: { requiresAuth: true },
     },
     {
       path: "/:pathMatch(.*)*",

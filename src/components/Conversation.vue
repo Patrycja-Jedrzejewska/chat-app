@@ -1,40 +1,106 @@
 <template>
-    <h3 class="conversation__title">Konwersacja z użytkownikiem: {{ contactDisplayName }}</h3>
-    <div class="chat">
+    <div class="mobileTopbar">
+        <button v-if="windowWidth < 768" @click="goBack" class="btn btn--goBack"><img src = "../assets/goBack-icon.svg" alt="go back icon" class="icon"/></button>
+        <h3 class="conversation__title">Konwersacja z:<br />{{ contactDisplayName }}</h3>
+    </div>
+    <div class="chat" v-if="hasContact">
         <Chat :contactId="contactId"/>
     </div>
+    <div class="empty-chat" v-else></div>
 </template>
 <script>
 import { useUserStore } from '../store';
-import { defineComponent, ref, onMounted, computed } from 'vue';
-import router from '../router';
+import { defineComponent, ref,watch, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import Chat from '../components/Chat.vue'
 export default defineComponent({
   name: 'Conversation',
   components: {
     Chat,
   },
-  computed: {
-    contactId() {
-      return this.$route.params.contactId;
-    },
-    contactDisplayName() {
-      const userStore = useUserStore();
-      const user = userStore.users.find(user => user.id === this.contactId);
-      return user ? user.displayName : '';
-    },
+  setup(props, { emit }) {
+    const router = useRouter();
+    const userStore = useUserStore();
+    const contactId = ref('');
+    const contactDisplayName = ref('');
+    const hasContact = ref(false);
+    const contactsArray = userStore.users;
+    const windowWidth = ref(window.innerWidth);
+
+    const handleResize = () => {
+      windowWidth.value = window.innerWidth;
+    };
+
+    const updateContactDisplayName = () => {
+      const newContactId = router.currentRoute.value.params.contactId;
+      const contact = contactsArray.find((user) => user.id === newContactId);
+      contactDisplayName.value = contact ? contact.displayName : '';
+    };
+
+    onMounted(() => {
+      contactId.value = router.currentRoute.value.params.contactId;
+      updateContactDisplayName();
+      window.addEventListener('resize', handleResize);
+    });
+
+    watch(() => router.currentRoute.value.params.contactId, (newContactId) => {
+      contactId.value = newContactId;
+      updateContactDisplayName();
+    });
+
+    watch(contactId, () => {
+      hasContact.value = !!contactId.value;
+    });
+
+    const goBack = () => {
+      emit('go-back');
+    };
+
+    return {
+      contactId,
+      contactDisplayName,
+      hasContact,
+      goBack,
+      windowWidth,
+    };
   },
 });
 </script>
 <style scoped lang="scss">
-.conversation__title{
+.mobileTopbar{
     display: flex;
-    justify-content: center;
-    text-align: center;
-    flex-wrap: wrap;
-    width: 100%;
+    justify-content: space-evenly;
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    @media only screen and (min-width: 768px) {
+        display: none;
+    }
+    .btn--goBack{
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        width: 40px;
+        border: none;
+        background-color: #fff;
+        .icon{
+            width: 40px;
+        }
+    }
+    .conversation__title{
+        text-align: center;
+        margin-left: 20px;
+        margin-right: 20px;
+        padding-left: 40px;
+    }
 }
-.chat{
+.chat {
+    height: calc(100vh - 65px);
+    overflow-y: auto;
     display: flex;
+    @media only screen and (min-width: 768px) {
+        margin-top: 0;
+        height: 100vh;
+    }
 }
 </style>

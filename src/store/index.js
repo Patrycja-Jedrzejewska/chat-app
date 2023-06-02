@@ -13,12 +13,7 @@ import { getDoc,
     setDoc,
     doc,
     updateDoc,
-    collection,
-    query,
-    where,
-    orderBy,
-    onSnapshot,
-    Timestamp 
+    collection
 } from 'firebase/firestore'
 import {  generateInitial, generateRandomColor } from '../utilities/avatar'
 
@@ -33,11 +28,15 @@ export const useUserStore = defineStore("UserStore", {
   
   actions: {
     async createUserDocument(user) {
-        await setDoc(doc(db, "users", user.uid), {
-          uid: user.uid,
-          email: user.email,
-          contacts: [],
-        });
+        if(user){
+            await setDoc(doc(db, "users", user.uid), {
+                uid: user.uid,
+                email: user.email,
+                contacts: [],
+            });
+        } else{
+            throw new Error("User is null")
+        }
     },
 
     async addContactsToUser(user) {
@@ -57,6 +56,9 @@ export const useUserStore = defineStore("UserStore", {
         }
         const userInitial = localStorage.getItem(`userInitial_${user.uid}`);
         if (!userInitial) {
+            if(!user.displayName){
+                user.displayName=user.email.split('@')[0]
+            }
           const newInitial = generateInitial(user.displayName);
           localStorage.setItem(`userInitial_${user.uid}`, newInitial);
         }
@@ -96,6 +98,11 @@ export const useUserStore = defineStore("UserStore", {
     async login(email, password) {
       try {
         await signInWithEmailAndPassword(auth, email, password);
+        
+        this.user = auth.currentUser;
+        await this.addContactsToUser(this.user)
+        await this.getContactIds();
+
         router.push("/");
       } catch (error) {
         switch (error.code) {
@@ -109,7 +116,7 @@ export const useUserStore = defineStore("UserStore", {
             throw new Error("Something went wrong");
         }
       }
-      this.user = auth.currentUser;
+      
     },
     async GoogleLogin() {
         const provider = new GoogleAuthProvider();
@@ -142,11 +149,11 @@ export const useUserStore = defineStore("UserStore", {
 
         if (userData) {
             const userDetail = {
-            id: contactId,
-            displayName: userData.displayName,
-            email: userData.email,
-            color: userData.color,
-            initial: userData.initial
+                id: contactId,
+                displayName: userData.displayName,
+                email: userData.email,
+                color: userData.color,
+                initial: userData.initial
             };
             userDetails.push(userDetail);
         }
@@ -154,10 +161,14 @@ export const useUserStore = defineStore("UserStore", {
         this.users = userDetails;
     },
     async getContactIds() {
-        const userSnapshot = await getDoc(doc(db, "users", this.user.uid));
-        const userData = userSnapshot.data();
-        this.contacts = userData.contacts;
-    },
+        if (this.user) {
+          const userSnapshot = await getDoc(doc(db, "users", this.user.uid));
+          const userData = userSnapshot.data();
+          this.contacts = userData.contacts;
+        } else {
+          throw new Error("User is null"); 
+        }
+      },
 
   },
 });

@@ -12,6 +12,7 @@ $neutral-color: #fff8f0;
 #app{
     height: 100vh;
     background-color: $neutral-color;
+    overflow: hidden;    
 }
 
 .form-wrapper{
