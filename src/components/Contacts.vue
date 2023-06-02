@@ -18,7 +18,7 @@
   </template>
 <script>
 import Avatar from '../components/Avatar.vue'
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, getCurrentInstance  } from 'vue';
 import { defineComponent } from 'vue';
 import { useUserStore } from '../store';
 import { useRouter } from 'vue-router';
@@ -33,6 +33,7 @@ export default defineComponent({
     const contactsLoaded = ref(false);
     const router = useRouter();
     const selectedContactId = ref('');
+    const { emit } = getCurrentInstance();
 
     onMounted(async () => {
       await userStore.getContactIds();
@@ -40,16 +41,19 @@ export default defineComponent({
       contacts.value = [...userStore.users];
       contactsLoaded.value = true;
     });
-
+    const emitSelectedContact =()=>{
+        emit('selected-contact', selectedContactId.value);
+    }
     router.afterEach((to) => {
       const contactId = to.params.contactId;
       selectedContactId.value = contactId;
+      emitSelectedContact()
     });
-
+   
     return {
       contacts,
       contactsLoaded,
-      selectedContactId
+      selectedContactId,
     };
   },
 });
@@ -67,14 +71,12 @@ export default defineComponent({
             
             
     }
-     
-
+    
     &__list{
         list-style: none;
         padding-left: 5px;
         padding-right: 5px;
         margin-top: 20px; 
-
         .contact{
             display: flex;
             align-items: center;
@@ -84,7 +86,6 @@ export default defineComponent({
             padding: 5px 10px;
             background-color: #ffffff;
             border-radius: 20px;
-
             &--selected{
                 background-color: #f98f62 !important;
                 .contact__info{

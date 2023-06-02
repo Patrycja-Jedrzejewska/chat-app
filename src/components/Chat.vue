@@ -32,7 +32,6 @@ export default defineComponent({
         display: flex;
         flex-direction: column;
         height: 100vh;
-
         
         &__messages{
             flex-grow: 1;
