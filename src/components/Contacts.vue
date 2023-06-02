@@ -71,8 +71,9 @@ export default defineComponent({
             
             
     }
-    
+    overflow-y: auto;
     &__list{
+        
         list-style: none;
         padding-left: 5px;
         padding-right: 5px;

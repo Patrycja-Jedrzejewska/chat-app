@@ -47,19 +47,21 @@ setup() {
 <style scoped lang="scss">
 .chatview{
     display: flex;
-    flex-direction: column;
+    width: 100vw;
 }
 
 .conversation{
-    width: 100%;
     @media only screen and (min-width: 768px) {
     }
 }
 .contacts{
-    flex-basis: 360px;
     display: flex;
     height: 100vh;
+    width: 100vw;
+    justify-content: center;
     @media only screen and (min-width: 768px) {
+        width: 360px;
+        justify-content: left;
     }
 }
 </style>

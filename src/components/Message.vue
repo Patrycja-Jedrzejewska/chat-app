@@ -30,7 +30,7 @@ export default {
             color: '',
             initial: '',
         });
-
+        
         const fetchUserDetails = async () => {
             await userStore.fetchContactDetails([props.message.senderId]);
             const foundUser = userStore.users.find((user) => user.id === props.message.senderId);

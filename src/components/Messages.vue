@@ -45,7 +45,7 @@ export default {
 
     onUnmounted(async () => {
       if (unsubscribe && typeof unsubscribe === 'function') {
-        await unsubscribe(); // Anuluj subskrypcję przy odmontowywaniu komponentu
+        await unsubscribe();
       }
     });
 
@@ -57,3 +57,6 @@ export default {
   },
 };
 </script>
+<style scoped lang="scss">
+    
+</style>
