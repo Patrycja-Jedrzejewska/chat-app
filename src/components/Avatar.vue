@@ -32,11 +32,10 @@ export default {
   width: 35px;
   height: 35px;
   border-radius: 50%;
-}
-
-.avatar__initial {
-  font-size: 16px;
-  font-weight: bold;
-  color: #3d3d3b;
+  &__initial {
+    font-size: 16px;
+    font-weight: bold;
+    color: #3d3d3b;
+  }
 }
 </style>

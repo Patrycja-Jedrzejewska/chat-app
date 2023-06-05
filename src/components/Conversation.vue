@@ -1,14 +1,16 @@
 <template>
-  <div class="mobileTopbar">
-    <button v-if="windowWidth < mobileWidth" class="btn btn--goBack" @click="goBack">
-      <img src="../assets/goBack-icon.svg" alt="go back icon" class="icon" />
-    </button>
-    <h3 class="conversation__title">Konwersacja z:<br />{{ contactDisplayName }}</h3>
+  <div class="conversation">
+    <div class="conversation__mobileTopbar">
+      <button v-if="windowWidth < mobileWidth" class="btn btn--goBack" @click="goBack">
+        <img src="../assets/goBack-icon.svg" alt="go back icon" class="icon" />
+      </button>
+      <h3 class="conversation__title">Konwersacja z:<br />{{ contactDisplayName }}</h3>
+    </div>
+    <div v-if="hasContact" class="conversation__chat">
+      <Chat :contact-id="contactId" />
+    </div>
+    <div v-else class="conversation__empty-chat"></div>
   </div>
-  <div v-if="hasContact" class="chat">
-    <Chat :contact-id="contactId" />
-  </div>
-  <div v-else class="empty-chat"></div>
 </template>
 <script>
 import { useUserStore } from '../store/UserStore'
@@ -79,40 +81,42 @@ export default defineComponent({
 })
 </script>
 <style scoped lang="scss">
-.mobileTopbar {
-  display: flex;
-  justify-content: space-evenly;
-  position: sticky;
-  top: 0;
-  background-color: #fff;
-  @media only screen and (min-width: 768px) {
-    display: none;
-  }
-  .btn--goBack {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    width: 40px;
-    border: none;
+.conversation {
+  &__mobileTopbar {
+    display: flex;
+    justify-content: space-evenly;
+    position: sticky;
+    top: 0;
     background-color: #fff;
-    .icon {
-      width: 40px;
+    @media only screen and (min-width: 768px) {
+      display: none;
     }
   }
-  .conversation__title {
+  &__title {
     text-align: center;
     margin-left: 20px;
     margin-right: 20px;
     padding-left: 40px;
   }
+  &__chat {
+    height: calc(100vh - 65px);
+    overflow-y: auto;
+    display: flex;
+    @media only screen and (min-width: 768px) {
+      margin-top: 0;
+      height: 100vh;
+    }
+  }
 }
-.chat {
-  height: calc(100vh - 65px);
-  overflow-y: auto;
-  display: flex;
-  @media only screen and (min-width: 768px) {
-    margin-top: 0;
-    height: 100vh;
+.btn--goBack {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 40px;
+  border: none;
+  background-color: #fff;
+  .icon {
+    width: 40px;
   }
 }
 </style>
