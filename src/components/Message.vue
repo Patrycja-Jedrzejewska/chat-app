@@ -1,5 +1,5 @@
 <template>
-  <div class="message" :class="[isCurrentUser ? 'message--current-user' : 'message--another-user']">
+  <div class="message" :class="messageClass">
     <div v-if="!isCurrentUser" class="message__avatar">
       <Avatar :color="user.color" :initial="user.initial" />
     </div>
@@ -32,14 +32,16 @@ export default {
     })
 
     const fetchUserDetails = async () => {
-      await userStore.fetchContactDetails([props.message.senderId])
-      const foundUser = userStore.users.find((user) => user.id === props.message.senderId)
-      if (foundUser) {
+      try {
+        await userStore.fetchContactDetails([props.message.senderId])
+        const foundUser = userStore.users.find((user) => user.id === props.message.senderId)
         user.value = {
           displayName: foundUser.displayName,
           color: foundUser.color,
           initial: foundUser.initial,
         }
+      } catch (error) {
+        throw new Error(error)
       }
     }
 
@@ -50,8 +52,16 @@ export default {
       return currentUser && currentUser.uid === props.message.senderId
     })
 
+    const messageClass = computed(() => {
+      return {
+        'message--current-user': currentUser.value,
+        'message--another-user': !currentUser.value,
+      }
+    })
+
     return {
       user,
+      messageClass,
       isCurrentUser: currentUser,
     }
   },

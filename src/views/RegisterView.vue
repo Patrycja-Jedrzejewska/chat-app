@@ -11,13 +11,13 @@
             placeholder="name@example.com"
             required
             id="email"
-            v-bind:class="{ 'is-invalid': $v.email.$error }"
+            :class="{ 'is-invalid': $v.email.$error }"
             v-model="email"
             @keyup="$v.email.$touch()"
             class="form-control form__input form__input--email"
           />
           <label for="email" class="form-label form__label">Email address</label>
-          <div v-if="$v.email.$error" class="invalid-feedback form__error">
+          <div v-if="$v?.email?.$errors?.length" class="invalid-feedback form__error">
             {{ $v.email.$errors[0].$message }}
           </div>
         </section>
@@ -28,13 +28,13 @@
             autocomplete="new-password"
             placeholder="Password"
             id="password"
-            v-bind:class="{ 'is-invalid': $v.password.$error }"
+            :class="{ 'is-invalid': $v.password.$error }"
             v-model="password"
             @keyup="$v.password.$touch()"
             class="form-control form__input form__input--password"
           />
           <label for="password" class="form__label">Password</label>
-          <div v-if="$v.password.$error" class="invalid-feedback form__error">
+          <div v-if="$v?.password?.$errors?.length" class="invalid-feedback form__error">
             {{ $v.password.$errors[0].$message }}
           </div>
         </section>
@@ -46,18 +46,18 @@
             placeholder="Confirm password"
             required
             id="cPassword"
-            v-bind:class="{ 'is-invalid': $v.cPassword.$error }"
+            :class="{ 'is-invalid': $v.cPassword.$error }"
             v-model="cPassword"
             @keyup="$v.cPassword.$touch()"
             class="form-control form__input form__input--cPassword"
           />
           <label for="cPassword" class="form__label">Confirm Password</label>
-          <div v-if="$v.cPassword.$error" class="invalid-feedback form__error">
+          <div v-if="$v?.cPassword?.$errors?.length" class="invalid-feedback form__error">
             {{ $v.cPassword.$errors[0].$message }}
           </div>
         </section>
         <section class="form__group">
-          <div v-if="error" class="alert alert-danger form__alert">
+          <div v-if="error?.message" class="alert alert-danger form__alert">
             {{ error.message }}
           </div>
         </section>

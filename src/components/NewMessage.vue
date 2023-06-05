@@ -33,16 +33,13 @@ export default {
       user.value = auth.currentUser
     })
 
-    const sendNewMessage = () => {
-      if (newMessage.value.trim() !== '') {
-        sendMessage(user, newMessage, props.contactId)
-          .then(() => {
-            newMessage.value = ''
-            scrollToBottom()
-          })
-          .catch((error) => {
-            console.error('Wystąpił błąd podczas wysyłania wiadomości:', error)
-          })
+    const sendNewMessage = async () => {
+      try {
+        await sendMessage(user, newMessage, props.contactId)
+        newMessage.value = ''
+        scrollToBottom()
+      } catch (error) {
+        throw new Error('Wystąpił błąd podczas wysyłania wiadomości:', error)
       }
     }
 

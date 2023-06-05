@@ -17,7 +17,7 @@
             @keyup="$v.email.$touch()"
           />
           <label for="email" class="form-label form__label">Email address</label>
-          <div v-if="$v.email.$error" class="invalid-feedback form__error">
+          <div v-if="$v?.email?.$errors?.length" class="invalid-feedback form__error">
             {{ $v.email.$errors[0].$message }}
           </div>
         </section>
@@ -35,12 +35,12 @@
             @keyup="$v.password.$touch()"
           />
           <label for="password" class="form__label">Password</label>
-          <div v-if="$v.password.$error" class="invalid-feedback form__error">
+          <div v-if="$v?.password?.$errors?.length" class="invalid-feedback form__error">
             {{ $v.password.$errors[0].$message }}
           </div>
         </section>
         <section class="form__group">
-          <div v-if="error" class="alert alert-danger form__alert">
+          <div v-if="error?.message" class="alert alert-danger form__alert">
             {{ error.message }}
           </div>
         </section>

@@ -1,5 +1,5 @@
 <template>
-  <div class="avatar" :style="{ backgroundColor: color }">
+  <div class="avatar" :style="avatarStyle">
     <div class="avatar__initial">{{ initial }}</div>
   </div>
 </template>
@@ -15,7 +15,14 @@ export default {
       required: true,
     },
   },
-};
+  computed: {
+    avatarStyle() {
+      return {
+        backgroundColor: this.color,
+      }
+    },
+  },
+}
 </script>
 <style scoped lang="scss">
 .avatar {

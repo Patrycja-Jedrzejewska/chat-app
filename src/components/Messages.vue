@@ -33,17 +33,21 @@ export default {
     watch(
       () => props.contactId,
       async () => {
-        if (unsubscribe && typeof unsubscribe === 'function') {
+        try {
           await unsubscribe()
           unsubscribe = null
+          await fetchMessages()
+        } catch (error) {
+          throw new Error(error)
         }
-        await fetchMessages()
       }
     )
 
     onUnmounted(async () => {
-      if (unsubscribe && typeof unsubscribe === 'function') {
+      try {
         await unsubscribe()
+      } catch (error) {
+        throw new Error(error)
       }
     })
 

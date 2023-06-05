@@ -1,6 +1,6 @@
 <template>
   <div class="mobileTopbar">
-    <button v-if="windowWidth < 768" class="btn btn--goBack" @click="goBack">
+    <button v-if="windowWidth < mobileWidth" class="btn btn--goBack" @click="goBack">
       <img src="../assets/goBack-icon.svg" alt="go back icon" class="icon" />
     </button>
     <h3 class="conversation__title">Konwersacja z:<br />{{ contactDisplayName }}</h3>
@@ -15,6 +15,7 @@ import { useUserStore } from '../store/UserStore'
 import { defineComponent, ref, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Chat from '../components/Chat.vue'
+import { mobileWidth } from '../utilities/breakpoints'
 export default defineComponent({
   name: 'Conversation',
   components: {
@@ -72,6 +73,7 @@ export default defineComponent({
       hasContact,
       goBack,
       windowWidth,
+      mobileWidth,
     }
   },
 })
