@@ -1,10 +1,10 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from "vue-router";
 import LoginView from "../views/LoginView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import ChatView from "../views/ChatView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import NoAccessView from "../views/NoAccessView.vue";
-import Conversation from "../components/Conversation.vue"
+import Conversation from "../components/Conversation.vue";
 
 import { auth } from "../firebase/index";
 
@@ -22,14 +22,14 @@ const router = createRouter({
       component: RegisterView,
     },
     {
-      path: '/',
-      name: 'ChatView',
+      path: "/",
+      name: "ChatView",
       component: ChatView,
       meta: { requiresAuth: true },
       children: [
         {
-          path: 'conversation/:contactId',
-          name: 'Conversation',
+          path: "conversation/:contactId",
+          name: "Conversation",
           component: Conversation,
           props: true,
         },
@@ -48,11 +48,7 @@ const router = createRouter({
   ],
 });
 router.beforeEach((to, from, next) => {
-  if (
-    to.path === "/login" &&
-    from.path === "/login" &&
-    auth.currentUser
-  ) {
+  if (to.path === "/login" && from.path === "/login" && auth.currentUser) {
     next("/");
     return;
   }

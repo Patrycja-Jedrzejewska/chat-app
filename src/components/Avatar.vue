@@ -1,21 +1,21 @@
 <template>
-    <div class="avatar" :style="{ backgroundColor: color }">
-        <div class="avatar__initial">{{ initial }}</div>
-    </div>
+  <div class="avatar" :style="{ backgroundColor: color }">
+    <div class="avatar__initial">{{ initial }}</div>
+  </div>
 </template>
 <script>
-export default{
-    props: {
-        color: {
-            type: String,
-            required: true
-        },
-        initial: {
-            type: String,
-            required: true
-        }
+export default {
+  props: {
+    color: {
+      type: String,
+      required: true,
     },
-}
+    initial: {
+      type: String,
+      required: true,
+    },
+  },
+};
 </script>
 <style scoped lang="scss">
 .avatar {
@@ -30,6 +30,6 @@ export default{
 .avatar__initial {
   font-size: 16px;
   font-weight: bold;
-  color: #3D3D3B;
+  color: #3d3d3b;
 }
 </style>

@@ -8,19 +8,19 @@ The aim was to create the Vue application with real time chat. Project includes 
 
 ## Technologies used
 
-* Vue 3
-* Sass
-* Firebase
-* Vite
-* Pinia :)
+- Vue 3
+- Sass
+- Firebase
+- Vite
+- Pinia :)
 
 ## Features
 
-* BEM methodology
-* Login form
-* Registration form
-* data validation
-* custom chat
+- BEM methodology
+- Login form
+- Registration form
+- data validation
+- custom chat
 
 ## Project Setup
 

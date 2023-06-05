@@ -1,16 +1,15 @@
 <template>
-    <div class="messages" v-if="messages.length>0">
-        <Message v-for="message in messages" :key="message.id" :message="message" />
-    </div>
-    <div v-else>Brak wiadomości</div>
+  <div class="messages" v-if="messages.length > 0">
+    <Message v-for="message in messages" :key="message.id" :message="message" />
+  </div>
+  <div v-else>Brak wiadomości</div>
 </template>
-<script >
-import { ref, watch, onUnmounted } from 'vue'
-import { useUserStore } from '../store'
-import { getMessages } from '../chat/index'
-import Message from './Message.vue'
-import { auth } from '../firebase/index'
-import { scrollToBottom } from '../utilities/scroll'
+<script>
+import { ref, watch, onUnmounted } from "vue";
+import { getMessages } from "../chat/index";
+import Message from "./Message.vue";
+import { auth } from "../firebase/index";
+import { scrollToBottom } from "../utilities/scroll";
 
 export default {
   props: {
@@ -23,20 +22,23 @@ export default {
     Message,
   },
   setup(props) {
-    const userStore = useUserStore();
     const messages = ref([]);
     let unsubscribe = null;
 
     const fetchMessages = async () => {
-      unsubscribe = await getMessages(auth.currentUser, messages, props.contactId);
-      scrollToBottom()
+      unsubscribe = await getMessages(
+        auth.currentUser,
+        messages,
+        props.contactId
+      );
+      scrollToBottom();
     };
 
     watch(
       () => props.contactId,
       async () => {
-        if (unsubscribe && typeof unsubscribe === 'function') {
-          await unsubscribe(); 
+        if (unsubscribe && typeof unsubscribe === "function") {
+          await unsubscribe();
           unsubscribe = null;
         }
         await fetchMessages();
@@ -44,7 +46,7 @@ export default {
     );
 
     onUnmounted(async () => {
-      if (unsubscribe && typeof unsubscribe === 'function') {
+      if (unsubscribe && typeof unsubscribe === "function") {
         await unsubscribe();
       }
     });
@@ -57,6 +59,4 @@ export default {
   },
 };
 </script>
-<style scoped lang="scss">
-    
-</style>
+<style scoped lang="scss"></style>
