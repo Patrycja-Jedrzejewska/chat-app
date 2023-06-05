@@ -1,11 +1,11 @@
 <template>
   <div class="new-message">
     <input
+      v-model="newMessage"
       type="text"
       class="form-control new-message__input"
-      v-model="newMessage"
-      @keyup.enter="sendNewMessage"
       placeholder="Type a message..."
+      @keyup.enter="sendNewMessage"
     />
     <button class="new-message__send-btn" @click="sendNewMessage">
       <img src="../assets/send-icon.svg" alt="Send icon" class="icon" />
@@ -13,10 +13,10 @@
   </div>
 </template>
 <script>
-import { ref, watchEffect } from "vue";
-import { auth } from "../firebase/index";
-import { sendMessage } from "../chat/index";
-import { scrollToBottom } from "../utilities/scroll";
+import { ref, watchEffect } from 'vue'
+import { auth } from '../firebase/index'
+import { sendMessage } from '../chat/index'
+import { scrollToBottom } from '../utilities/scroll'
 
 export default {
   props: {
@@ -26,33 +26,33 @@ export default {
     },
   },
   setup(props) {
-    const user = ref(auth.currentUser);
-    const newMessage = ref("");
+    const user = ref(auth.currentUser)
+    const newMessage = ref('')
 
     watchEffect(() => {
-      user.value = auth.currentUser;
-    });
+      user.value = auth.currentUser
+    })
 
     const sendNewMessage = () => {
-      if (newMessage.value.trim() !== "") {
+      if (newMessage.value.trim() !== '') {
         sendMessage(user, newMessage, props.contactId)
           .then(() => {
-            newMessage.value = "";
-            scrollToBottom();
+            newMessage.value = ''
+            scrollToBottom()
           })
           .catch((error) => {
-            console.error("Wystąpił błąd podczas wysyłania wiadomości:", error);
-          });
+            console.error('Wystąpił błąd podczas wysyłania wiadomości:', error)
+          })
       }
-    };
+    }
 
     return {
       user,
       newMessage,
       sendNewMessage,
-    };
+    }
   },
-};
+}
 </script>
 <style scoped lang="scss">
 .new-message {

@@ -11,7 +11,7 @@
   <div v-else class="empty-chat"></div>
 </template>
 <script>
-import { useUserStore } from '../store'
+import { useUserStore } from '../store/UserStore'
 import { defineComponent, ref, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Chat from '../components/Chat.vue'

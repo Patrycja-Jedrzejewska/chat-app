@@ -74,7 +74,7 @@
 </template>
 <script>
 import { ref, computed } from 'vue'
-import { useUserStore } from '../store/index.js'
+import { useUserStore } from '../store/UserStore.js'
 import { EMAIL_VALIDATE, PASSWORD_VALIDATE } from '../utilities/rules.js'
 import { useVuelidate } from '@vuelidate/core'
 import { helpers, required, sameAs } from '@vuelidate/validators'

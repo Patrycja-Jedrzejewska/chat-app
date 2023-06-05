@@ -26,7 +26,7 @@
 <script>
 import Avatar from '../components/Avatar.vue'
 import { onMounted, ref, getCurrentInstance, defineComponent } from 'vue'
-import { useUserStore } from '../store'
+import { useUserStore } from '../store/UserStore'
 import { useRouter } from 'vue-router'
 
 export default defineComponent({

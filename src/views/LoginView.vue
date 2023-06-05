@@ -12,8 +12,8 @@
             autocomplete="email"
             placeholder="name@example.com"
             required
-            :class="{ 'is-invalid': $v.email.$error }"
             class="form-control form__input form__input--email"
+            :class="{ 'is-invalid': $v.email.$error }"
             @keyup="$v.email.$touch()"
           />
           <label for="email" class="form-label form__label">Email address</label>
@@ -28,10 +28,10 @@
             v-model="password"
             type="password"
             autocomplete="current-password"
-            required
-            :class="{ 'is-invalid': $v.password.$error }"
             placeholder="Password"
+            required
             class="form-control form__input form__input--password"
+            :class="{ 'is-invalid': $v.password.$error }"
             @keyup="$v.password.$touch()"
           />
           <label for="password" class="form__label">Password</label>
@@ -72,7 +72,7 @@
 </template>
 <script>
 import { ref, computed } from 'vue'
-import { useUserStore } from '../store/index.js'
+import { useUserStore } from '../store/UserStore.js'
 import { useVuelidate } from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 export default {
