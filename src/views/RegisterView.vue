@@ -16,9 +16,7 @@
             @keyup="$v.email.$touch()"
             class="form-control form__input form__input--email"
           />
-          <label for="email" class="form-label form__label"
-            >Email address</label
-          >
+          <label for="email" class="form-label form__label">Email address</label>
           <div v-if="$v.email.$error" class="invalid-feedback form__error">
             {{ $v.email.$errors[0].$message }}
           </div>
@@ -64,13 +62,7 @@
           </div>
         </section>
         <!-- Submit button -->
-        <button
-          type="submit"
-          :disabled="$v.$invalid"
-          class="btn-primary btn btn--submit"
-        >
-          Sign up
-        </button>
+        <button type="submit" :disabled="$v.$invalid" class="btn-primary btn btn--submit">Sign up</button>
         <!-- Login button -->
         <p class="form__link form__link--login">
           Already have an account?
@@ -81,22 +73,22 @@
   </div>
 </template>
 <script>
-import { ref, computed } from "vue";
-import { useUserStore } from "../store/index.js";
-import { EMAIL_VALIDATE, PASSWORD_VALIDATE } from "../utilities/rules.js";
-import { useVuelidate } from "@vuelidate/core";
-import { helpers, required, sameAs } from "@vuelidate/validators";
+import { ref, computed } from 'vue'
+import { useUserStore } from '../store/index.js'
+import { EMAIL_VALIDATE, PASSWORD_VALIDATE } from '../utilities/rules.js'
+import { useVuelidate } from '@vuelidate/core'
+import { helpers, required, sameAs } from '@vuelidate/validators'
 export default {
-  name: "RegisterView",
+  name: 'RegisterView',
   setup() {
-    const email = ref("");
-    const password = ref("");
-    const cPassword = ref("");
-    const error = ref(null);
-    const store = useUserStore();
+    const email = ref('')
+    const password = ref('')
+    const cPassword = ref('')
+    const error = ref(null)
+    const store = useUserStore()
 
-    const emailRgx = helpers.regex(EMAIL_VALIDATE.regex);
-    const passwordRgx = helpers.regex(PASSWORD_VALIDATE.regex);
+    const emailRgx = helpers.regex(EMAIL_VALIDATE.regex)
+    const passwordRgx = helpers.regex(PASSWORD_VALIDATE.regex)
 
     const rules = computed(() => ({
       email: {
@@ -114,17 +106,17 @@ export default {
           sameAs(password)
         ),
       },
-    }));
-    const $v = useVuelidate(rules, { email, password, cPassword });
+    }))
+    const $v = useVuelidate(rules, { email, password, cPassword })
 
     const register = async () => {
-      error.value = null;
+      error.value = null
       try {
-        await store.signup(email.value, password.value);
+        await store.signup(email.value, password.value)
       } catch (err) {
-        error.value = err;
+        error.value = err
       }
-    };
+    }
     return {
       email,
       password,
@@ -134,8 +126,8 @@ export default {
       $v,
       register,
       error,
-    };
+    }
   },
-};
+}
 </script>
 <style scoped lang="scss"></style>

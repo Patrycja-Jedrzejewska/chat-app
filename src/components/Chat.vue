@@ -1,20 +1,20 @@
 <template>
   <div class="chat">
     <div class="chat__messages">
-      <Messages :contactId="contactId" />
+      <Messages :contact-id="contactId" />
     </div>
     <div class="chat__new-message">
-      <NewMessage :contactId="contactId" />
+      <NewMessage :contact-id="contactId" />
     </div>
   </div>
 </template>
 <script>
-import { defineComponent } from "vue";
-import Messages from "./Messages.vue";
-import NewMessage from "./NewMessage.vue";
+import { defineComponent } from 'vue'
+import Messages from './Messages.vue'
+import NewMessage from './NewMessage.vue'
 
 export default defineComponent({
-  name: "Chat",
+  name: 'Chat',
   components: {
     Messages,
     NewMessage,
@@ -25,7 +25,7 @@ export default defineComponent({
       required: true,
     },
   },
-});
+})
 </script>
 <style scoped lang="scss">
 .chat {

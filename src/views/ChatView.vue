@@ -1,59 +1,56 @@
 <template>
   <div class="chatview">
-    <div class="chatview__contacts" v-if="showContacts">
-      <Contacts @selectedContact="handleContactSelection" />
+    <div v-if="showContacts" class="chatview__contacts">
+      <Contacts @selected-contact="handleContactSelection" />
     </div>
-    <div class="chatview__conversation" v-if="hasSelectedContact">
-      <Conversation @goBack="goBack" />
+    <div v-if="hasSelectedContact" class="chatview__conversation">
+      <Conversation @go-back="goBack" />
     </div>
   </div>
 </template>
 <script>
-import { mobileWidth } from "../utilities/breakpoints";
-import Contacts from "../components/Contacts.vue";
-import Conversation from "../components/Conversation.vue";
-import { ref, onMounted, onBeforeMount, computed } from "vue";
+import { mobileWidth } from '../utilities/breakpoints'
+import Contacts from '../components/Contacts.vue'
+import Conversation from '../components/Conversation.vue'
+import { ref, onMounted, onBeforeMount, computed } from 'vue'
 
 export default {
-  name: "ChatView",
+  name: 'ChatView',
   components: {
     Contacts,
     Conversation,
   },
   setup() {
-    const windowWidth = ref(window.innerWidth);
-    const selectedContactId = ref("");
+    const windowWidth = ref(window.innerWidth)
+    const selectedContactId = ref('')
 
     const handleResize = () => {
-      windowWidth.value = window.innerWidth;
-    };
+      windowWidth.value = window.innerWidth
+    }
 
     onMounted(() => {
-      window.addEventListener("resize", handleResize);
-    });
+      window.addEventListener('resize', handleResize)
+    })
 
     onBeforeMount(() => {
-      window.removeEventListener("resize", handleResize);
-    });
+      window.removeEventListener('resize', handleResize)
+    })
 
     const handleContactSelection = (contactId) => {
-      selectedContactId.value = contactId;
-    };
+      selectedContactId.value = contactId
+    }
 
     const hasSelectedContact = computed(() => {
-      return selectedContactId.value !== "";
-    });
+      return selectedContactId.value !== ''
+    })
 
     const goBack = () => {
-      selectedContactId.value = "";
-    };
+      selectedContactId.value = ''
+    }
 
     const showContacts = computed(() => {
-      return (
-        windowWidth.value >= mobileWidth ||
-        (windowWidth.value < mobileWidth && selectedContactId.value === "")
-      );
-    });
+      return windowWidth.value >= mobileWidth || (windowWidth.value < mobileWidth && selectedContactId.value === '')
+    })
 
     return {
       windowWidth,
@@ -62,9 +59,9 @@ export default {
       showContacts,
       handleContactSelection,
       hasSelectedContact,
-    };
+    }
   },
-};
+}
 </script>
 <style scoped lang="scss">
 .chatview {

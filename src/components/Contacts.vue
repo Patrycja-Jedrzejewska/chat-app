@@ -24,45 +24,45 @@
   </div>
 </template>
 <script>
-import Avatar from "../components/Avatar.vue";
-import { onMounted, ref, getCurrentInstance, defineComponent } from "vue";
-import { useUserStore } from "../store";
-import { useRouter } from "vue-router";
+import Avatar from '../components/Avatar.vue'
+import { onMounted, ref, getCurrentInstance, defineComponent } from 'vue'
+import { useUserStore } from '../store'
+import { useRouter } from 'vue-router'
 
 export default defineComponent({
   components: {
     Avatar,
   },
   setup() {
-    const userStore = useUserStore();
-    const contacts = ref([]);
-    const contactsLoaded = ref(false);
-    const router = useRouter();
-    const selectedContactId = ref("");
-    const { emit } = getCurrentInstance();
+    const userStore = useUserStore()
+    const contacts = ref([])
+    const contactsLoaded = ref(false)
+    const router = useRouter()
+    const selectedContactId = ref('')
+    const { emit } = getCurrentInstance()
 
     onMounted(async () => {
-      await userStore.getContactIds();
-      await userStore.fetchContactDetails(userStore.contacts);
-      contacts.value = [...userStore.users];
-      contactsLoaded.value = true;
-    });
+      await userStore.getContactIds()
+      await userStore.fetchContactDetails(userStore.contacts)
+      contacts.value = [...userStore.users]
+      contactsLoaded.value = true
+    })
     const emitSelectedContact = () => {
-      emit("selectedContact", selectedContactId.value);
-    };
+      emit('selected-contact', selectedContactId.value)
+    }
     router.afterEach((to) => {
-      const contactId = to.params.contactId;
-      selectedContactId.value = contactId;
-      emitSelectedContact();
-    });
+      const contactId = to.params.contactId
+      selectedContactId.value = contactId
+      emitSelectedContact()
+    })
 
     return {
       contacts,
       contactsLoaded,
       selectedContactId,
-    };
+    }
   },
-});
+})
 </script>
 <style scoped lang="scss">
 .contacts {

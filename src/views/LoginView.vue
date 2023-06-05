@@ -6,19 +6,17 @@
         <!-- Email input -->
         <section class="form-floating form__group">
           <input
+            id="email"
+            v-model="email"
             type="email"
             autocomplete="email"
             placeholder="name@example.com"
             required
-            id="email"
-            v-bind:class="{ 'is-invalid': $v.email.$error }"
-            v-model="email"
-            @keyup="$v.email.$touch()"
+            :class="{ 'is-invalid': $v.email.$error }"
             class="form-control form__input form__input--email"
+            @keyup="$v.email.$touch()"
           />
-          <label for="email" class="form-label form__label"
-            >Email address</label
-          >
+          <label for="email" class="form-label form__label">Email address</label>
           <div v-if="$v.email.$error" class="invalid-feedback form__error">
             {{ $v.email.$errors[0].$message }}
           </div>
@@ -26,15 +24,15 @@
         <!-- Password input -->
         <section class="form-floating form__group">
           <input
+            id="password"
+            v-model="password"
             type="password"
             autocomplete="current-password"
             required
-            id="password"
-            v-bind:class="{ 'is-invalid': $v.password.$error }"
+            :class="{ 'is-invalid': $v.password.$error }"
             placeholder="Password"
-            v-model="password"
-            @keyup="$v.password.$touch()"
             class="form-control form__input form__input--password"
+            @keyup="$v.password.$touch()"
           />
           <label for="password" class="form__label">Password</label>
           <div v-if="$v.password.$error" class="invalid-feedback form__error">
@@ -48,13 +46,7 @@
         </section>
         <section class="form__group form__group--buttons">
           <!-- Submit button -->
-          <button
-            type="submit"
-            :disabled="$v.$invalid"
-            class="btn-primary btn btn--submit"
-          >
-            Sign in
-          </button>
+          <button type="submit" :disabled="$v.$invalid" class="btn-primary btn btn--submit">Sign in</button>
 
           <div class="divider">
             <hr class="hr" />
@@ -62,11 +54,7 @@
 
           <!-- Google button -->
           <button class="btn-primary btn btn--google" @click="GoogleSignIn">
-            <img
-              src="../assets/google-icon.svg"
-              alt="Google icon"
-              class="google-icon"
-            />
+            <img src="../assets/google-icon.svg" alt="Google icon" class="google-icon" />
             Sign in with google
           </button>
 
@@ -83,17 +71,17 @@
   </div>
 </template>
 <script>
-import { ref, computed } from "vue";
-import { useUserStore } from "../store/index.js";
-import { useVuelidate } from "@vuelidate/core";
-import { required } from "@vuelidate/validators";
+import { ref, computed } from 'vue'
+import { useUserStore } from '../store/index.js'
+import { useVuelidate } from '@vuelidate/core'
+import { required } from '@vuelidate/validators'
 export default {
-  name: "LoginView",
+  name: 'LoginView',
   setup() {
-    const email = ref("");
-    const password = ref("");
-    const store = useUserStore();
-    const error = ref(null);
+    const email = ref('')
+    const password = ref('')
+    const store = useUserStore()
+    const error = ref(null)
 
     const rules = computed(() => ({
       email: {
@@ -102,25 +90,25 @@ export default {
       password: {
         required,
       },
-    }));
-    const $v = useVuelidate(rules, { email, password });
+    }))
+    const $v = useVuelidate(rules, { email, password })
 
     const login = async () => {
-      error.value = null;
+      error.value = null
       try {
-        await store.login(email.value, password.value);
+        await store.login(email.value, password.value)
       } catch (err) {
-        error.value = err;
+        error.value = err
       }
-    };
+    }
 
     const GoogleSignIn = () => {
-      store.GoogleLogin();
-    };
+      store.GoogleLogin()
+    }
 
-    return { login, email, password, error, store, GoogleSignIn, $v };
+    return { login, email, password, error, store, GoogleSignIn, $v }
   },
-};
+}
 </script>
 <style scoped lang="scss">
 .btn--google {
