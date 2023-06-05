@@ -12,7 +12,7 @@
 </template>
 <script>
 import { useUserStore } from '../store/UserStore'
-import { defineComponent, ref, watch, onMounted } from 'vue'
+import { defineComponent, ref, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Chat from '../components/Chat.vue'
 export default defineComponent({
@@ -44,6 +44,10 @@ export default defineComponent({
       contactId.value = router.currentRoute.value.params.contactId
       updateContactDisplayName()
       window.addEventListener('resize', handleResize)
+    })
+
+    onUnmounted(() => {
+      window.removeEventListener('resize', handleResize)
     })
 
     watch(
