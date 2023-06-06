@@ -57,8 +57,6 @@ export default defineComponent({
     })
 
     return {
-      contacts,
-      contactsLoaded,
       selectedContactId,
     }
   },
@@ -82,7 +80,6 @@ export default defineComponent({
     color: gray;
   }
 }
-
 .contact {
   display: flex;
   align-items: center;
