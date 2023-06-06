@@ -8,19 +8,21 @@ import {
   GoogleAuthProvider,
 } from 'firebase/auth'
 
-import { getDoc, getDocs, setDoc, doc, updateDoc, collection } from 'firebase/firestore'
+import { getDoc, getDocs, setDoc, query, where, doc, updateDoc, collection } from 'firebase/firestore'
 import { generateInitial, generateRandomColor } from '../utilities/avatar'
 
 import router from '../router'
 
 export const useUserStore = defineStore('UserStore', {
   state: () => ({
-    user: null,
-    contacts: [],
-    users: [],
+    user: null, //logged-in user
+    contacts: [], //id of users saved as contacts of currently logged in user
+    users: [], //contacts as objects
+    rooms: [], //rooms array//objects
   }),
 
   actions: {
+    //create a new user in firebase in the users table
     async createUserDocument(user) {
       try {
         await setDoc(doc(db, 'users', user.uid), {
@@ -32,20 +34,21 @@ export const useUserStore = defineStore('UserStore', {
         throw new Error('User is null')
       }
     },
-
+    //add/update contacts of logged-in user
     async addContactsToUser(user) {
       try {
         const usersSnapshot = await getDocs(collection(db, 'users'))
-        const registeredUsers = usersSnapshot.docs.map((doc) => doc.id)
-        const contacts = registeredUsers.filter((userId) => userId !== user.uid)
+        const registeredUsers = usersSnapshot.docs.map((doc) => doc.id) //get the id of all registered users
+        const contacts = registeredUsers.filter((userId) => userId !== user.uid) //registered excluding the current
         await updateDoc(doc(db, 'users', user.uid), {
+          //assigning contacts to a user
           contacts,
         })
       } catch (error) {
         throw new Error(error)
       }
     },
-
+    //Update additional information (color, initial) for the logged-in user in the users table
     async updateAdditionalUserInfo(user) {
       try {
         let userColor = localStorage.getItem(`userColor_${user.uid}`)
@@ -71,15 +74,127 @@ export const useUserStore = defineStore('UserStore', {
       }
     },
 
+    //create a new room in firebase in the rooms table
+    async createRoomDocument(user) {
+      try {
+        // Sprawdź, czy użytkownik już ma swój pokój
+        const userRoomsRef = collection(db, 'rooms')
+        const userRoomsQuery = query(userRoomsRef, where('ownerId', '==', user.uid))
+        const userRoomsSnapshot = await getDocs(userRoomsQuery)
+
+        if (userRoomsSnapshot.size > 0) {
+          return
+        }
+
+        let roomId = await this.generateUniqueRoomId()
+        let roomRef = doc(db, 'rooms', roomId)
+
+        // Sprawdź, czy pokój o wygenerowanym ID już istnieje w bazie danych
+        let roomSnapshot = await getDoc(roomRef)
+        let attempts = 1
+        const maxAttempts = 5 // Limit
+
+        while (roomSnapshot.exists() && attempts <= maxAttempts) {
+          roomId = await this.generateUniqueRoomId()
+          roomRef = doc(db, 'rooms', roomId)
+          roomSnapshot = await getDoc(roomRef)
+          attempts++
+        }
+
+        if (attempts > maxAttempts) {
+          throw new Error('Failed to generate a unique room ID.')
+        }
+
+        await setDoc(roomRef, {
+          roomId: roomId,
+          roomName: user.displayName + `'s room`,
+          ownerId: user.uid,
+          guestsIds: [],
+        })
+      } catch (error) {
+        throw new Error(error)
+      }
+    },
+    // Generate a unique 6-digit room ID
+    async generateUniqueRoomId() {
+      const characters = '0123456789'
+      let roomId = ''
+      for (let i = 0; i < 6; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length)
+        roomId += characters.charAt(randomIndex)
+      }
+      return roomId
+    },
+    //add/update guest of room
+    async addGuestsToRoom(guestId, roomId) {
+      try {
+        const roomRef = doc(db, 'rooms', roomId)
+        const roomSnapshot = await getDoc(roomRef) //get a particular room
+        const currentGuestsIds = roomSnapshot.exists() ? roomSnapshot.data().guestsIds : [] //get the current guest board
+        if (!currentGuestsIds.includes(guestId)) {
+          //checking if the selected guest is already added
+          const updatedGuestsIds = [...currentGuestsIds, guestId] //addition of a new guest
+          await updateDoc(roomRef, {
+            guestsIds: updatedGuestsIds, //guest list update
+          })
+        }
+      } catch (error) {
+        throw new Error(error)
+      }
+    },
+    //remove guest from room
+    async removeGuestFromRoom(guestId, roomId) {
+      try {
+        const roomRef = doc(db, 'rooms', roomId)
+        const roomSnapshot = await getDoc(roomRef)
+        const currentGuestsIds = roomSnapshot.exists() ? roomSnapshot.data().guestsIds : [] //get the current guest board
+        //checking if the selected guest is in array
+        if (currentGuestsIds.includes(guestId)) {
+          // Filter out the userId from the guestsIds array
+          const updatedGuestsIds = currentGuestsIds.filter((guest) => guest !== guestId)
+          await updateDoc(roomRef, {
+            guestsIds: updatedGuestsIds, //guest list update
+          })
+        }
+      } catch (error) {
+        throw new Error(error)
+      }
+    },
+    //get rooms
+    async fetchRoomsDetails() {
+      try {
+        const user = this.user // Pobierz aktualnie zalogowanego użytkownika (zależy od używanej biblioteki autoryzacji)
+        const userRoomsRef = collection(db, 'rooms')
+        const userRoomsQuery = query(userRoomsRef, where('ownerId', '==', user.uid))
+        const userRoomsSnapshot = await getDocs(userRoomsQuery)
+
+        const roomDetailsPromises = userRoomsSnapshot.docs.map(async (doc) => {
+          const roomData = doc.data()
+          const roomDetail = {
+            id: doc.id,
+            roomName: roomData.roomName,
+            ownerId: roomData.ownerId,
+            guestIds: roomData.guestIds,
+          }
+          return roomDetail
+        })
+
+        const roomDetails = await Promise.all(roomDetailsPromises)
+        this.rooms = roomDetails
+      } catch (error) {
+        throw new Error(error)
+      }
+    },
+    //classic registration
     async signup(email, password) {
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password)
         const user = userCredential.user
 
-        await this.createUserDocument(user)
-        await this.addContactsToUser(user)
-        await this.updateAdditionalUserInfo(user)
-
+        await this.createUserDocument(user) //creation of a new user
+        await this.addContactsToUser(user) //adding contacts for a new user
+        await this.updateAdditionalUserInfo(user) //adding a color and initial for a new user
+        await this.createRoomDocument(user)
         router.push('/login')
       } catch (error) {
         switch (error.code) {
@@ -97,14 +212,14 @@ export const useUserStore = defineStore('UserStore', {
       }
       this.user = auth.currentUser
     },
-
+    //classic login
     async login(email, password) {
       try {
         await signInWithEmailAndPassword(auth, email, password)
 
-        this.user = auth.currentUser
-        await this.addContactsToUser(this.user)
-        await this.getContactIds()
+        this.user = auth.currentUser //setting the current user
+        await this.addContactsToUser(this.user) //add/update contacts
+        await this.getContactIds() //assigning contacts from firebase to local contacts table
 
         router.push('/')
       } catch (error) {
@@ -125,16 +240,16 @@ export const useUserStore = defineStore('UserStore', {
       try {
         const result = await signInWithPopup(auth, provider)
         const user = result.user
-
-        await this.createUserDocument(user)
-        await this.addContactsToUser(user)
-        await this.updateAdditionalUserInfo(user)
-
+        this.user = auth.currentUser
+        await this.createUserDocument(user) //creation of a new user
+        await this.addContactsToUser(user) //adding contacts for a new user
+        await this.updateAdditionalUserInfo(user) //adding a color and initial for a new user
+        await this.getContactIds() //assigning contacts from firebase to local contacts table
+        await this.createRoomDocument(user)
         router.push('/')
       } catch (error) {
         throw new Error(error)
       }
-      this.user = auth.currentUser
     },
 
     async logout() {
@@ -146,7 +261,7 @@ export const useUserStore = defineStore('UserStore', {
         throw new Error(error)
       }
     },
-
+    //get other users to the users table
     async fetchContactDetails(contactIds) {
       try {
         const userDetails = []
@@ -171,6 +286,7 @@ export const useUserStore = defineStore('UserStore', {
         throw new Error(error)
       }
     },
+    //assigning contacts from firebase to an array in store
     async getContactIds() {
       try {
         const userSnapshot = await getDoc(doc(db, 'users', this.user.uid))

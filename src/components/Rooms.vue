@@ -1,70 +1,61 @@
 <template>
-  <div class="contacts">
-    <ul v-if="contacts.length > 0" class="contacts__list">
+  <div class="rooms">
+    <ul v-if="roomsLoaded" class="rooms__list">
       <li
-        v-for="contact in contacts"
-        :key="contact.id"
-        class="contact"
-        :class="{ 'contact--selected': contact.id === selectedContactId }"
+        v-for="room in rooms"
+        :key="room.roomId"
+        class="room"
+        :class="{ 'room--selected': room.roomId === selectedRoomId }"
       >
-        <router-link :to="`/conversation/${contact.id}`" class="contact__link link">
-          <div class="contact__avatar">
-            <Avatar :color="contact.color" :initial="contact.initial" />
-          </div>
-          <div class="contact__details">
-            <div class="contact__field contact__field--displayName">
-              {{ contact.displayName }}
-            </div>
-            <div class="contact__field contact__field--email">{{ contact.email }}</div>
+        <router-link :to="`/conversation/${room.roomId}`" class="room__link link">
+          <div class="room__details">
+            {{ room.roomName }}
           </div>
         </router-link>
       </li>
     </ul>
-    <div v-else class="contacts__emptylist">Brak kontaktów</div>
+    <div v-else class="rooms__emptylist">Brak kontaktów</div>
   </div>
 </template>
+
 <script>
-import Avatar from '../components/Avatar.vue'
 import { onMounted, ref, getCurrentInstance, defineComponent } from 'vue'
 import { useUserStore } from '../store/UserStore'
 import { useRouter } from 'vue-router'
 
 export default defineComponent({
-  components: {
-    Avatar,
-  },
   setup() {
     const userStore = useUserStore()
-    const contacts = ref([])
-    const contactsLoaded = ref(false)
+    const rooms = ref([])
+    const roomsLoaded = ref(false)
     const router = useRouter()
-    const selectedContactId = ref('')
+    const selectedRoomId = ref('')
     const { emit } = getCurrentInstance()
 
     onMounted(async () => {
-      await userStore.getContactIds()
-      await userStore.fetchContactDetails(userStore.contacts)
-      contacts.value = userStore.users
-      contactsLoaded.value = true
+      await userStore.fetchRoomsDetails(userStore.rooms)
+      rooms.value = userStore.rooms
+      roomsLoaded.value = true
+      console.log(userStore.rooms)
     })
-    const emitSelectedContact = () => {
-      emit('selected-contact', selectedContactId.value)
+    const emitSelectedRoom = () => {
+      emit('selected-room', selectedRoomId.value)
     }
     router.afterEach((to) => {
-      const contactId = to.params.contactId
-      selectedContactId.value = contactId
-      emitSelectedContact()
+      const roomId = to.params.roomId
+      selectedRoomId.value = roomId
+      emitSelectedRoom()
     })
     return {
-      contacts,
-      contactsLoaded,
-      selectedContactId,
+      rooms,
+      roomsLoaded,
+      selectedRoomId,
     }
   },
 })
 </script>
 <style scoped lang="scss">
-.contacts {
+.rooms {
   background-color: #ffffff;
   @media only screen and (min-width: 600px) {
     width: 100%;
@@ -81,7 +72,7 @@ export default defineComponent({
     color: gray;
   }
 }
-.contact {
+.room {
   display: flex;
   align-items: center;
   align-content: center;
@@ -118,10 +109,10 @@ export default defineComponent({
     }
   }
 }
-.contact {
+.room {
   &--selected {
     background-color: #f98f62 !important;
-    .contact__field--email {
+    .room__field--email {
       color: #fff;
     }
   }

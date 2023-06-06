@@ -1,28 +1,28 @@
 <template>
   <div class="chatview">
-    <div v-if="showContacts" class="chatview__contacts">
-      <Contacts @selected-contact="handleContactSelection" />
+    <div v-if="showRooms" class="chatview__rooms">
+      <Rooms @selected-room="handleRoomSelection" />
     </div>
-    <div v-if="hasSelectedContact" class="chatview__conversation">
+    <div v-if="hasSelectedRoom" class="chatview__conversation">
       <Conversation @go-back="goBack" />
     </div>
   </div>
 </template>
 <script>
 import { mobileWidth } from '../utilities/breakpoints'
-import Contacts from '../components/Contacts.vue'
+import Rooms from '../components/Rooms.vue'
 import Conversation from '../components/Conversation.vue'
 import { ref, onMounted, onBeforeMount, computed } from 'vue'
 
 export default {
   name: 'ChatView',
   components: {
-    Contacts,
+    Rooms,
     Conversation,
   },
   setup() {
     const windowWidth = ref(window.innerWidth)
-    const selectedContactId = ref('')
+    const selectedRoomId = ref('')
 
     const handleResize = () => {
       windowWidth.value = window.innerWidth
@@ -36,29 +36,29 @@ export default {
       window.removeEventListener('resize', handleResize)
     })
 
-    const handleContactSelection = (contactId) => {
-      selectedContactId.value = contactId
+    const handleRoomSelection = (roomId) => {
+      selectedRoomId.value = roomId
     }
 
-    const hasSelectedContact = computed(() => {
-      return selectedContactId.value !== ''
+    const hasSelectedRoom = computed(() => {
+      return selectedRoomId.value !== ''
     })
 
     const goBack = () => {
-      selectedContactId.value = ''
+      selectedRoomId.value = ''
     }
 
-    const showContacts = computed(() => {
-      return windowWidth.value >= mobileWidth || (windowWidth.value < mobileWidth && selectedContactId.value === '')
+    const showRooms = computed(() => {
+      return windowWidth.value >= mobileWidth || (windowWidth.value < mobileWidth && selectedRoomId.value === '')
     })
 
     return {
       windowWidth,
-      selectedContactId,
+      selectedRoomId,
       goBack,
-      showContacts,
-      handleContactSelection,
-      hasSelectedContact,
+      showRooms,
+      handleRoomSelection,
+      hasSelectedRoom,
     }
   },
 }
@@ -71,7 +71,7 @@ export default {
     @media only screen and (min-width: 768px) {
     }
   }
-  &__contacts {
+  &__rooms {
     display: flex;
     height: 100vh;
     width: 100vw;
