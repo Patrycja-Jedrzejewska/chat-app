@@ -1,7 +1,8 @@
 export const scrollToBottom = () => {
-    const messagesContainer = document.querySelector('.messages');
-    const lastMessage = messagesContainer.lastElementChild;
-    if (lastMessage) {
-      lastMessage.scrollIntoView();
-    }
-};
+  if (!document.querySelector('.messages')) return
+  const messagesContainer = document.querySelector('.messages')
+  if (!messagesContainer) return
+  const lastMessage = messagesContainer.lastElementChild
+  if (!lastMessage) return
+  lastMessage.scrollIntoView()
+}
