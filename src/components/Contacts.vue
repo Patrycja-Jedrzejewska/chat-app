@@ -56,8 +56,6 @@ export default defineComponent({
       emitSelectedContact()
     })
     return {
-      contacts,
-      contactsLoaded,
       selectedContactId,
     }
   },
