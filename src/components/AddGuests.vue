@@ -1,9 +1,9 @@
 <template>
   <div class="addGuests">
     <div class="addGuests__contacts">
-      <Contacts @guests-selected="handleGuestsSelected" />
+      <Contacts :room-id="roomId" @guests-selected="handleGuestsSelected" />
     </div>
-    <button class="addGuests__btn" @click="addGuestsToRoom">Add to room</button>
+    <button class="addGuests__btn" :disabled="selectedGuests.length === 0" @click="addGuestsToRoom">Add to room</button>
   </div>
 </template>
 <script>
@@ -19,6 +19,7 @@ export default {
       required: true,
     },
   },
+  emits: ['popup-close'],
   data() {
     return {
       selectedGuests: [],
@@ -35,7 +36,7 @@ export default {
       this.selectedGuests.forEach((guestId) => {
         userStore.addGuestsToRoom(guestId, roomId)
       })
-      console.log(this.selectedGuests)
+      this.$emit('popup-close')
     },
   },
 }

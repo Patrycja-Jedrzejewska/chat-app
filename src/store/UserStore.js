@@ -125,6 +125,22 @@ export const useUserStore = defineStore('UserStore', {
       }
       return roomId
     },
+    async fetchGuestIdsForRoom(roomId) {
+      try {
+        const roomRef = doc(db, 'rooms', roomId)
+        const roomSnapshot = await getDoc(roomRef)
+
+        if (roomSnapshot.exists()) {
+          const roomData = roomSnapshot.data()
+          const guestIds = roomData.guestsIds || []
+          return guestIds.map((guest) => guest.id)
+        } else {
+          throw new Error('Room not found')
+        }
+      } catch (error) {
+        throw new Error(error)
+      }
+    },
     //add/update guest of room
     async addGuestsToRoom(guestId, roomId) {
       try {

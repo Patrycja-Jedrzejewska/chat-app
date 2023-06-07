@@ -1,7 +1,13 @@
 <template>
   <div class="contacts">
     <ul v-if="contacts" class="contacts__list">
-      <li v-for="contact in contacts" :key="contact.id" class="contact" @click="toggleContactSelection(contact)">
+      <li
+        v-for="contact in contacts"
+        :key="contact.id"
+        class="contact"
+        :class="['contact', { 'contact--selected': contact.selected }, { 'contact--guest': contact.isGuest }]"
+        @click="toggleContactSelection(contact)"
+      >
         <div class="contact__avatar">
           <Avatar :color="contact.color" :initial="contact.initial" />
         </div>
@@ -25,8 +31,14 @@ export default {
   components: {
     Avatar,
   },
+  props: {
+    roomId: {
+      type: String,
+      required: true,
+    },
+  },
   emits: ['guests-selected'],
-  setup() {
+  setup(props) {
     const userStore = useUserStore()
     const contacts = computed(() => userStore.users)
     const selectedContacts = ref([])
@@ -34,18 +46,31 @@ export default {
     onMounted(async () => {
       await userStore.getContactIds()
       await userStore.fetchContactDetails(userStore.contacts)
+
+      for (const contact of contacts.value) {
+        contact.isGuest = await isGuest(contact.id)
+      }
     })
 
     const toggleContactSelection = (contact) => {
-      contact.selected = !contact.selected
-      if (contact.selected) {
-        selectedContacts.value.push(contact)
-      } else {
-        const index = selectedContacts.value.findIndex((c) => c.id === contact.id)
-        if (index !== -1) {
-          selectedContacts.value.splice(index, 1)
+      if (!contact.isGuest) {
+        contact.selected = !contact.selected
+        if (contact.selected) {
+          if (!selectedContacts.value.includes(contact)) {
+            selectedContacts.value.push(contact)
+          }
+        } else {
+          const index = selectedContacts.value.findIndex((c) => c.id === contact.id)
+          if (index !== -1) {
+            selectedContacts.value.splice(index, 1)
+          }
         }
       }
+    }
+
+    const isGuest = async (contactId) => {
+      const guestIds = await userStore.fetchGuestIdsForRoom(props.roomId)
+      return guestIds.includes(contactId)
     }
 
     return {
@@ -115,11 +140,15 @@ export default {
   }
 }
 .contact {
+  background-color: #fff;
   &--selected {
     background-color: #f98f62 !important;
     .contact__field--email {
       color: #fff;
     }
+  }
+  &--guest {
+    background-color: lightblue;
   }
 }
 </style>
