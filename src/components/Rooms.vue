@@ -1,13 +1,9 @@
 <template>
   <div class="rooms">
+    <button class="rooms__add-new">Create new room</button>
     <ul v-if="roomsLoaded" class="rooms__list">
-      <li
-        v-for="room in rooms"
-        :key="room.roomId"
-        class="room"
-        :class="{ 'room--selected': room.roomId === selectedRoomId }"
-      >
-        <router-link :to="`/conversation/${room.roomId}`" class="room__link link">
+      <li v-for="room in rooms" :key="room.id" class="room" :class="{ 'room--selected': room.id === selectedRoomId }">
+        <router-link :to="`/conversation/${room.id}`" class="room__link link">
           <div class="room__details">
             {{ room.roomName }}
           </div>
@@ -36,7 +32,6 @@ export default defineComponent({
       await userStore.fetchRoomsDetails(userStore.rooms)
       rooms.value = userStore.rooms
       roomsLoaded.value = true
-      console.log(userStore.rooms)
     })
     const emitSelectedRoom = () => {
       emit('selected-room', selectedRoomId.value)

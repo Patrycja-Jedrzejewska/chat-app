@@ -163,7 +163,7 @@ export const useUserStore = defineStore('UserStore', {
     //get rooms
     async fetchRoomsDetails() {
       try {
-        const user = this.user // Pobierz aktualnie zalogowanego użytkownika (zależy od używanej biblioteki autoryzacji)
+        const user = this.user // get current user
         const userRoomsRef = collection(db, 'rooms')
         const userRoomsQuery = query(userRoomsRef, where('ownerId', '==', user.uid))
         const userRoomsSnapshot = await getDocs(userRoomsQuery)
