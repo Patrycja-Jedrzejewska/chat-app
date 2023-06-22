@@ -29,12 +29,17 @@ export default {
     handleGuestsSelected(selectedGuests) {
       this.selectedGuests = selectedGuests
     },
-    addGuestsToRoom() {
+
+    async addGuestsToRoom() {
       const userStore = useUserStore()
       const roomId = this.roomId
 
-      this.selectedGuests.forEach((guestId) => {
-        userStore.addGuestsToRoom(guestId, roomId)
+      this.selectedGuests.forEach((guest) => {
+        userStore.addGuestsToRoom(guest, roomId)
+        const guestRoom = userStore.rooms.find((room) => room.id === roomId)
+        if (guestRoom != null) {
+          guestRoom.guestsIds.push(guest)
+        }
       })
       this.$emit('popup-close')
     },

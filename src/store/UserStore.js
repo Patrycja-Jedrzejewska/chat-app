@@ -7,8 +7,7 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
 } from 'firebase/auth'
-
-import { getDoc, getDocs, setDoc, query, where, doc, updateDoc, collection } from 'firebase/firestore'
+import { getDoc, arrayUnion, getDocs, setDoc, query, where, doc, updateDoc, collection } from 'firebase/firestore'
 import { generateInitial, generateRandomColor } from '../utilities/avatar'
 
 import router from '../router'
@@ -19,6 +18,7 @@ export const useUserStore = defineStore('UserStore', {
     contacts: [], //id of users saved as contacts of currently logged in user
     users: [], //contacts as objects
     rooms: [], //rooms array//objects
+    roomCreationError: null,
   }),
 
   actions: {
@@ -75,16 +75,9 @@ export const useUserStore = defineStore('UserStore', {
     },
 
     //create a new room in firebase in the rooms table
-    async createRoomDocument(user) {
+    async createRoomDocument(roomName, user) {
       try {
         // Sprawdź, czy użytkownik już ma swój pokój
-        const userRoomsRef = collection(db, 'rooms')
-        const userRoomsQuery = query(userRoomsRef, where('ownerId', '==', user.uid))
-        const userRoomsSnapshot = await getDocs(userRoomsQuery)
-
-        if (userRoomsSnapshot.size > 0) {
-          return
-        }
 
         let roomId = await this.generateUniqueRoomId()
         let roomRef = doc(db, 'rooms', roomId)
@@ -105,15 +98,35 @@ export const useUserStore = defineStore('UserStore', {
           throw new Error('Failed to generate a unique room ID.')
         }
 
-        await setDoc(roomRef, {
+        const userRoomsRef = collection(db, 'rooms')
+        const duplicateRoomQuery = query(
+          userRoomsRef,
+          where('ownerId', '==', user.uid),
+          where('roomName', '==', roomName.value)
+        )
+
+        const duplicateRoomSnapshot = await getDocs(duplicateRoomQuery)
+        if (!duplicateRoomSnapshot.empty) {
+          throw new Error('Room name already exists.')
+        }
+        this.roomCreationError = null
+        if (roomName == '') {
+          roomName.value = user.displayName + `'s room`
+        }
+        const roomDetails = {
           roomId: roomId,
-          roomName: user.displayName + `'s room`,
+          roomName: roomName.value,
           ownerId: user.uid,
           guestsIds: [],
-        })
+        }
+        await setDoc(roomRef, roomDetails)
+        this.rooms.push(roomDetails)
       } catch (error) {
-        throw new Error(error)
+        this.setRoomCreationError(error.message)
       }
+    },
+    setRoomCreationError(errorMessage) {
+      this.roomCreationError = errorMessage
     },
     // Generate a unique 6-digit room ID
     async generateUniqueRoomId() {
@@ -142,16 +155,17 @@ export const useUserStore = defineStore('UserStore', {
       }
     },
     //add/update guest of room
-    async addGuestsToRoom(guestId, roomId) {
+    async addGuestsToRoom(guest, roomId) {
       try {
         const roomRef = doc(db, 'rooms', roomId)
-        const roomSnapshot = await getDoc(roomRef) //get a particular room
-        const currentGuestsIds = roomSnapshot.exists() ? roomSnapshot.data().guestsIds : [] //get the current guest board
-        if (!currentGuestsIds.includes(guestId)) {
-          //checking if the selected guest is already added
-          const updatedGuestsIds = [...currentGuestsIds, guestId] //addition of a new guest
+        const roomSnapshot = await getDoc(roomRef)
+        const currentGuestsIds = roomSnapshot.exists() ? roomSnapshot.data().guestsIds : []
+
+        if (currentGuestsIds && !currentGuestsIds.includes(guest)) {
+          guest.isGuest = true
+
           await updateDoc(roomRef, {
-            guestsIds: updatedGuestsIds, //guest list update
+            guestsIds: arrayUnion(guest),
           })
         }
       } catch (error) {
@@ -162,15 +176,21 @@ export const useUserStore = defineStore('UserStore', {
     async removeGuestFromRoom(guestId, roomId) {
       try {
         const roomRef = doc(db, 'rooms', roomId)
-        const roomSnapshot = await getDoc(roomRef)
-        const currentGuestsIds = roomSnapshot.exists() ? roomSnapshot.data().guestsIds : [] //get the current guest board
-        //checking if the selected guest is in array
-        if (currentGuestsIds.includes(guestId)) {
-          // Filter out the userId from the guestsIds array
-          const updatedGuestsIds = currentGuestsIds.filter((guest) => guest !== guestId)
-          await updateDoc(roomRef, {
-            guestsIds: updatedGuestsIds, //guest list update
-          })
+        const roomDoc = await getDoc(roomRef)
+
+        if (roomDoc.exists()) {
+          const guestsIds = roomDoc.data().guestsIds
+
+          const index = guestsIds.findIndex((guest) => guest.id === guestId)
+
+          if (index !== -1) {
+            guestsIds.splice(index, 1)
+            await updateDoc(roomRef, {
+              guestsIds: guestsIds,
+            })
+
+            await this.fetchContactDetails(this.contacts, roomId)
+          }
         }
       } catch (error) {
         throw new Error(error)
@@ -190,13 +210,30 @@ export const useUserStore = defineStore('UserStore', {
             id: doc.id,
             roomName: roomData.roomName,
             ownerId: roomData.ownerId,
-            guestIds: roomData.guestIds,
+            guestsIds: roomData.guestsIds,
           }
           return roomDetail
         })
 
         const roomDetails = await Promise.all(roomDetailsPromises)
         this.rooms = roomDetails
+      } catch (error) {
+        throw new Error(error)
+      }
+    },
+    async isGuestInRoom(guestId, roomId) {
+      try {
+        const roomRef = doc(db, 'rooms', roomId)
+        const roomSnapshot = await getDoc(roomRef)
+
+        if (roomSnapshot.exists()) {
+          const guestIds = roomSnapshot.data().guestsIds || []
+
+          if (Array.isArray(guestIds)) {
+            return guestIds.includes(guestId)
+          }
+        }
+        return false
       } catch (error) {
         throw new Error(error)
       }
@@ -210,7 +247,7 @@ export const useUserStore = defineStore('UserStore', {
         await this.createUserDocument(user) //creation of a new user
         await this.addContactsToUser(user) //adding contacts for a new user
         await this.updateAdditionalUserInfo(user) //adding a color and initial for a new user
-        await this.createRoomDocument(user)
+        await this.createRoomDocument('', user)
         router.push('/login')
       } catch (error) {
         switch (error.code) {
@@ -261,7 +298,17 @@ export const useUserStore = defineStore('UserStore', {
         await this.addContactsToUser(user) //adding contacts for a new user
         await this.updateAdditionalUserInfo(user) //adding a color and initial for a new user
         await this.getContactIds() //assigning contacts from firebase to local contacts table
-        await this.createRoomDocument(user)
+
+        // Sprawdź, czy użytkownik już ma swoje pokoje
+        const userRoomsRef = collection(db, 'rooms')
+        const userRoomsQuery = query(userRoomsRef, where('ownerId', '==', user.uid))
+        const userRoomsSnapshot = await getDocs(userRoomsQuery)
+
+        if (userRoomsSnapshot.size == 0) {
+          // Jeżeli użytkownik ma już swoje pokoje, zakończ funkcję
+          await this.createRoomDocument('', user)
+        }
+
         router.push('/')
       } catch (error) {
         throw new Error(error)
@@ -278,27 +325,34 @@ export const useUserStore = defineStore('UserStore', {
       }
     },
     //get other users to the users table
-    async fetchContactDetails(contactIds) {
+    async fetchContactDetails(contactIds, roomId) {
       try {
         const userDetails = []
 
         for (const contactId of contactIds) {
-          const userSnapshot = await getDoc(doc(db, 'users', contactId))
-          const userData = userSnapshot.data()
+          try {
+            const userSnapshot = await getDoc(doc(db, 'users', contactId))
+            const userData = userSnapshot.exists() ? userSnapshot.data() : null
 
-          if (userData) {
-            const userDetail = {
-              id: contactId,
-              displayName: userData.displayName,
-              email: userData.email,
-              color: userData.color,
-              initial: userData.initial,
+            if (userData) {
+              const isGuest = await this.isGuestInRoom(contactId, roomId)
+              const userDetail = {
+                id: contactId,
+                displayName: userData.displayName,
+                email: userData.email,
+                color: userData.color,
+                initial: userData.initial,
+                isGuest: isGuest,
+              }
+              userDetails.push(userDetail)
             }
-            userDetails.push(userDetail)
+          } catch (error) {
+            console.error(`Error fetching contact details for contactId: ${contactId}`, error)
           }
         }
         this.users = userDetails
       } catch (error) {
+        console.error('Error fetching contact details:', error)
         throw new Error(error)
       }
     },

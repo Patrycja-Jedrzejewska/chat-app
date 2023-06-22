@@ -104,7 +104,6 @@ export default defineComponent({
     }
 
     const showConversationSettingsComputed = computed(() => {
-      // Tutaj definiujemy warunek dla wyświetlania ConversationSettings
       return showConversationSettings.value
     })
     return {

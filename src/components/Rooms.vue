@@ -1,6 +1,6 @@
 <template>
   <div class="rooms">
-    <button class="rooms__add-new">Create new room</button>
+    <button class="rooms__add-new" @click="openCreateNewRoom">Create new room</button>
     <ul v-if="roomsLoaded" class="rooms__list">
       <li v-for="room in rooms" :key="room.id" class="room" :class="{ 'room--selected': room.id === selectedRoomId }">
         <router-link :to="`/conversation/${room.id}`" class="room__link link">
@@ -11,15 +11,22 @@
       </li>
     </ul>
     <div v-else class="rooms__emptylist">Brak kontaktów</div>
+    <div v-if="showCreateNewRoomComputed">
+      <CreateNewRoom :owner="user" @close-modal="closeCreateNewRoom" />
+    </div>
   </div>
 </template>
 
 <script>
-import { onMounted, ref, getCurrentInstance, defineComponent } from 'vue'
+import { onMounted, ref, getCurrentInstance, defineComponent, computed } from 'vue'
 import { useUserStore } from '../store/UserStore'
 import { useRouter } from 'vue-router'
 
+import CreateNewRoom from './CreateNewRoom.vue'
+
 export default defineComponent({
+  name: 'Rooms',
+  components: { CreateNewRoom },
   setup() {
     const userStore = useUserStore()
     const rooms = ref([])
@@ -27,6 +34,8 @@ export default defineComponent({
     const router = useRouter()
     const selectedRoomId = ref('')
     const { emit } = getCurrentInstance()
+    const showCreateNewRoom = ref(false)
+    const user = userStore.user
 
     onMounted(async () => {
       await userStore.fetchRoomsDetails(userStore.rooms)
@@ -41,10 +50,26 @@ export default defineComponent({
       selectedRoomId.value = roomId
       emitSelectedRoom()
     })
+    const openCreateNewRoom = () => {
+      showCreateNewRoom.value = true
+    }
+
+    const closeCreateNewRoom = () => {
+      showCreateNewRoom.value = false
+    }
+
+    const showCreateNewRoomComputed = computed(() => {
+      return showCreateNewRoom.value
+    })
     return {
       rooms,
       roomsLoaded,
       selectedRoomId,
+      showCreateNewRoom,
+      openCreateNewRoom,
+      closeCreateNewRoom,
+      showCreateNewRoomComputed,
+      user,
     }
   },
 })

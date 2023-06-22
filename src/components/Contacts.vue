@@ -5,7 +5,10 @@
         v-for="contact in contacts"
         :key="contact.id"
         class="contact"
-        :class="['contact', { 'contact--selected': contact.selected }, { 'contact--guest': contact.isGuest }]"
+        :class="{
+          'contact--selected': contact.selected,
+          'contact--guest': isGuest(contact),
+        }"
         @click="toggleContactSelection(contact)"
       >
         <div class="contact__avatar">
@@ -17,13 +20,17 @@
           </div>
           <div class="contact__field contact__field--email">{{ contact.email }}</div>
         </div>
+        <div v-if="isGuest(contact)" class="contact__delete-guest">
+          <button class="btn btn--delete-guest" @click="deleteGuest(contact.id)">X</button>
+        </div>
       </li>
     </ul>
     <div v-else class="contacts__emptylist">Brak kontaktów</div>
   </div>
 </template>
+
 <script>
-import { onMounted, computed, ref } from 'vue'
+import { onMounted, computed, ref, watch } from 'vue'
 import Avatar from '../components/Avatar.vue'
 import { useUserStore } from '../store/UserStore'
 
@@ -42,21 +49,20 @@ export default {
     const userStore = useUserStore()
     const contacts = computed(() => userStore.users)
     const selectedContacts = ref([])
+    const guest = ref(null)
 
-    onMounted(async () => {
-      await userStore.getContactIds()
-      await userStore.fetchContactDetails(userStore.contacts)
+    const isGuest = (contact) => {
+      const guestRoom = userStore.rooms.find((room) => room.id === props.roomId)
+      const guestObj = guestRoom ? guestRoom.guestsIds.find((guest) => guest.id === contact.id) : null
+      return guestObj ? guestObj.isGuest : false
+    }
 
-      for (const contact of contacts.value) {
-        contact.isGuest = await isGuest(contact.id)
-      }
-    })
-
-    const toggleContactSelection = (contact) => {
-      if (!contact.isGuest) {
+    const toggleContactSelection = async (contact) => {
+      if (!isGuest(contact)) {
         contact.selected = !contact.selected
+
         if (contact.selected) {
-          if (!selectedContacts.value.includes(contact)) {
+          if (!selectedContacts.value.some((c) => c.id === contact.id)) {
             selectedContacts.value.push(contact)
           }
         } else {
@@ -66,17 +72,50 @@ export default {
           }
         }
       }
+      updateContacts()
     }
 
-    const isGuest = async (contactId) => {
-      const guestIds = await userStore.fetchGuestIdsForRoom(props.roomId)
-      return guestIds.includes(contactId)
+    const deleteGuest = async (contactId) => {
+      await userStore.removeGuestFromRoom(contactId, props.roomId)
+
+      const guestRoom = userStore.rooms.find((room) => room.id === props.roomId)
+
+      if (guestRoom != null) {
+        const index = guestRoom.guestsIds.findIndex((id) => id.id === contactId)
+        if (index !== -1) {
+          guestRoom.guestsIds.splice(index, 1)
+        }
+      }
     }
+
+    onMounted(async () => {
+      await userStore.getContactIds()
+      await userStore.fetchContactDetails(userStore.contacts, props.roomId)
+      updateContacts()
+    })
+
+    const updateContacts = async () => {
+      contacts.value.forEach((contact) => {
+        if (isGuest(contact)) {
+          guest.value = isGuest(contact) ? contact : null
+        }
+      })
+    }
+
+    watch(contacts, (newContacts) => {
+      newContacts.forEach((contact) => {
+        contact.selected = selectedContacts.value.some((c) => c.id === contact.id)
+      })
+    })
 
     return {
       contacts,
       toggleContactSelection,
       selectedContacts,
+      guest,
+      deleteGuest,
+      isGuest,
+      updateContacts,
     }
   },
   mounted() {
