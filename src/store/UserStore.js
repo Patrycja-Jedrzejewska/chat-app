@@ -7,7 +7,18 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
 } from 'firebase/auth'
-import { getDoc, arrayUnion, getDocs, setDoc, query, where, doc, updateDoc, collection } from 'firebase/firestore'
+import {
+  getDoc,
+  arrayUnion,
+  deleteDoc,
+  getDocs,
+  setDoc,
+  query,
+  where,
+  doc,
+  updateDoc,
+  collection,
+} from 'firebase/firestore'
 import { generateInitial, generateRandomColor } from '../utilities/avatar'
 
 import router from '../router'
@@ -114,7 +125,7 @@ export const useUserStore = defineStore('UserStore', {
           roomName.value = user.displayName + `'s room`
         }
         const roomDetails = {
-          roomId: roomId,
+          id: roomId,
           roomName: roomName.value,
           ownerId: user.uid,
           guestsIds: [],
@@ -127,6 +138,45 @@ export const useUserStore = defineStore('UserStore', {
     },
     setRoomCreationError(errorMessage) {
       this.roomCreationError = errorMessage
+    },
+    async updateRoomName(newName, roomId) {
+      try {
+        const roomRef = doc(db, 'rooms', roomId) // Assuming you have a property `roomId` in the `user` object
+        const userRoomsRef = collection(db, 'rooms')
+        const duplicateRoomQuery = query(
+          userRoomsRef,
+          where('ownerId', '==', this.user.uid),
+          where('roomName', '==', newName.value)
+        )
+        const duplicateRoomSnapshot = await getDocs(duplicateRoomQuery)
+        if (!duplicateRoomSnapshot.empty) {
+          throw new Error('Room name already exists.')
+        }
+        this.roomCreationError = null
+
+        await updateDoc(roomRef, {
+          roomName: newName.value,
+        })
+        const index = this.rooms.findIndex((room) => room.id === roomId)
+        this.rooms[index].roomName = newName.value
+      } catch (error) {
+        this.setRoomCreationError(error.message)
+      }
+    },
+    async deleteRoom(roomId) {
+      try {
+        const roomRef = doc(db, 'rooms', roomId)
+
+        // Delete the room document from Firestore
+        await deleteDoc(roomRef)
+
+        // Remove the room from the local `rooms` array
+        const updatedRooms = this.rooms.filter((room) => room.id !== roomId)
+        this.rooms = updatedRooms
+        router.push('/')
+      } catch (error) {
+        throw new Error(error)
+      }
     },
     // Generate a unique 6-digit room ID
     async generateUniqueRoomId() {

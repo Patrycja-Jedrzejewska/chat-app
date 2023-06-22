@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { onMounted, ref, getCurrentInstance, defineComponent, computed } from 'vue'
+import { onMounted, ref, watch, getCurrentInstance, defineComponent, computed } from 'vue'
 import { useUserStore } from '../store/UserStore'
 import { useRouter } from 'vue-router'
 
@@ -27,6 +27,7 @@ import CreateNewRoom from './CreateNewRoom.vue'
 export default defineComponent({
   name: 'Rooms',
   components: { CreateNewRoom },
+
   setup() {
     const userStore = useUserStore()
     const rooms = ref([])
@@ -39,7 +40,6 @@ export default defineComponent({
 
     onMounted(async () => {
       await userStore.fetchRoomsDetails(userStore.rooms)
-      rooms.value = userStore.rooms
       roomsLoaded.value = true
     })
     const emitSelectedRoom = () => {
@@ -61,6 +61,13 @@ export default defineComponent({
     const showCreateNewRoomComputed = computed(() => {
       return showCreateNewRoom.value
     })
+
+    const updateRooms = () => {
+      rooms.value = userStore.rooms
+    }
+
+    watch(() => userStore.rooms, updateRooms)
+
     return {
       rooms,
       roomsLoaded,
@@ -70,6 +77,7 @@ export default defineComponent({
       closeCreateNewRoom,
       showCreateNewRoomComputed,
       user,
+      updateRooms,
     }
   },
 })
