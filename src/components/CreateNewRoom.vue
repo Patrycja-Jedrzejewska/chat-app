@@ -1,11 +1,10 @@
 <template>
   <div class="modal">
     <div class="modal__overlay">
-      <div class="modal__content">
+      <div class="modal__content create-room">
         <button class="modal__close" @click="closeModal">Close</button>
-
-        <form class="form" @submit.prevent="createNewRoom">
-          <h2>Create New Room</h2>
+        <form class="form create-room__form" @submit.prevent="createNewRoom">
+          <h2 class="form__title">Create New Room</h2>
           <input
             id="roomName"
             v-model="roomName"
@@ -16,10 +15,10 @@
             class="form-control form__input form__input--roomName"
           />
           <label for="roomName" class="form-label form__label">room name</label>
-          <div v-if="roomCreationError" class="error-message">
+          <div v-if="roomCreationError" class="form__error">
             {{ roomCreationError }}
           </div>
-          <button type="submit" class="btn-primary btn btn--submit">Create room</button>
+          <button type="submit" class="btn btn-primary btn--submit">Create room</button>
         </form>
       </div>
     </div>

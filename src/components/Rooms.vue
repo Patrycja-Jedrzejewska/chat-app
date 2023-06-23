@@ -11,12 +11,11 @@
       </li>
     </ul>
     <div v-else class="rooms__emptylist">Brak kontaktów</div>
-    <div v-if="showCreateNewRoomComputed">
+    <div v-if="showCreateNewRoomComputed" class="rooms__create-new">
       <CreateNewRoom :owner="user" @close-modal="closeCreateNewRoom" />
     </div>
   </div>
 </template>
-
 <script>
 import { onMounted, ref, watch, getCurrentInstance, defineComponent, computed } from 'vue'
 import { useUserStore } from '../store/UserStore'

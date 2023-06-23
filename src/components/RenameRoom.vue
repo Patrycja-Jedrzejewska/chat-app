@@ -1,11 +1,11 @@
 <template>
   <div class="modal">
     <div class="modal__overlay">
-      <div class="modal__content">
+      <div class="modal__content rename-room">
         <button class="modal__close" @click="closeRenameModal">Close</button>
 
-        <form class="form" @submit.prevent="renameRoom">
-          <h2>Rename Room</h2>
+        <form class="form rename-room__form" @submit.prevent="renameRoom">
+          <h2 class="form__title">Rename Room</h2>
           <input
             id="newName"
             v-model="newName"
@@ -16,7 +16,7 @@
             class="form-control form__input form__input--newName"
           />
           <label for="newName" class="form-label form__label">new room name</label>
-          <div v-if="roomCreationError" class="error-message">
+          <div v-if="roomCreationError" class="form__error">
             {{ roomCreationError }}
           </div>
           <button type="submit" class="btn-primary btn btn--submit">Rename</button>

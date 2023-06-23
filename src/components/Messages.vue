@@ -2,7 +2,7 @@
   <div v-if="messages.length > 0" class="messages">
     <Message v-for="message in messages" :key="message.id" :message="message" :room-id="roomId" />
   </div>
-  <div v-else>Brak wiadomości</div>
+  <div v-else class="messages--empty">Lack of messages</div>
 </template>
 <script>
 import { ref, watch, onUnmounted } from 'vue'

@@ -154,7 +154,7 @@ export default {
   margin: 10px;
   height: 70px;
   padding: 5px 10px;
-  background-color: #ffffff;
+  background-color: #fff;
   border-radius: 20px;
   &:hover {
     box-shadow: 0 0 0.5rem 0.1rem rgba(0, 91, 94, 0.25);
@@ -185,7 +185,6 @@ export default {
   }
 }
 .contact {
-  background-color: #fff;
   &--selected {
     background-color: #f98f62 !important;
     .contact__field--email {
@@ -197,7 +196,6 @@ export default {
   }
   &--owner {
     background-color: blue;
-    // Dodatkowe style dla właściciela
   }
 }
 </style>

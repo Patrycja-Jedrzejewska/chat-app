@@ -1,23 +1,24 @@
 <template>
   <div class="modal">
     <div class="modal__overlay">
-      <div class="modal__content">
+      <div class="modal__content settings">
         <button class="modal__close" @click="closeModal">Close</button>
         <h2>Conversation Settings</h2>
         <div class="settings__buttons">
           <button class="btn settings__button settings__button--rename" @click="openRenameRoomModal">
             Rename room
           </button>
-
           <button class="btn settings__button settings__button--delete-room" @click="deleteCurrentRoom">
             Delete room
           </button>
         </div>
-        <AddGuests :room-id="roomId" @popup-close="closeModal" />
+        <div class="settings__addGuests">
+          <AddGuests :room-id="roomId" @popup-close="closeModal" />
+        </div>
       </div>
     </div>
   </div>
-  <div v-if="showRenameRoomComputed">
+  <div v-if="showRenameRoomComputed" class="settings__rename">
     <RenameRoom :room-id="roomId" @close-rename-modal="closeRenameRoomModal" />
   </div>
 </template>

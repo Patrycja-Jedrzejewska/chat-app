@@ -13,13 +13,10 @@
         <img src="../assets/settings-icon.svg" alt="settings icon" class="icon" />
       </button>
     </div>
-
     <div class="conversation__chat">
       <Chat :room-id="roomId" />
     </div>
-    <!--<div v-else class="conversation__empty-chat"></div>-->
-
-    <div v-if="showConversationSettingsComputed">
+    <div v-if="showConversationSettingsComputed" class="conversation__settings">
       <ConversationSettings :room-id="roomId" @close-modal="closeConversationSettings" />
     </div>
   </div>
