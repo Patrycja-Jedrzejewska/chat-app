@@ -8,6 +8,7 @@
         :class="{
           'contact--selected': contact.selected,
           'contact--guest': isGuest(contact),
+          'contact--owner': isOwner(contact),
         }"
         @click="toggleContactSelection(contact)"
       >
@@ -58,7 +59,7 @@ export default {
     }
 
     const toggleContactSelection = async (contact) => {
-      if (!isGuest(contact)) {
+      if (!isGuest(contact) && !isOwner(contact)) {
         contact.selected = !contact.selected
 
         if (contact.selected) {
@@ -90,7 +91,7 @@ export default {
 
     onMounted(async () => {
       await userStore.getContactIds()
-      await userStore.fetchContactDetails(userStore.contacts, props.roomId)
+      await userStore.fetchContactDetails(props.roomId)
       updateContacts()
     })
 
@@ -101,7 +102,11 @@ export default {
         }
       })
     }
+    const isOwner = (contact) => {
+      const guestRoom = userStore.rooms.find((room) => room.id === props.roomId)
 
+      return contact.id === guestRoom.ownerId
+    }
     watch(contacts, (newContacts) => {
       newContacts.forEach((contact) => {
         contact.selected = selectedContacts.value.some((c) => c.id === contact.id)
@@ -116,6 +121,7 @@ export default {
       deleteGuest,
       isGuest,
       updateContacts,
+      isOwner,
     }
   },
   mounted() {
@@ -188,6 +194,10 @@ export default {
   }
   &--guest {
     background-color: lightblue;
+  }
+  &--owner {
+    background-color: blue;
+    // Dodatkowe style dla właściciela
   }
 }
 </style>

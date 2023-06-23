@@ -20,7 +20,7 @@ import { scrollToBottom } from '../utilities/scroll'
 
 export default {
   props: {
-    contactId: {
+    roomId: {
       type: String,
       required: true,
     },
@@ -35,7 +35,7 @@ export default {
 
     const sendNewMessage = async () => {
       try {
-        await sendMessage(user, newMessage, props.contactId)
+        await sendMessage(user, newMessage, props.roomId)
         newMessage.value = ''
         scrollToBottom()
       } catch (error) {

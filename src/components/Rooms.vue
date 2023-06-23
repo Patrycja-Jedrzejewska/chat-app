@@ -89,6 +89,7 @@ export default defineComponent({
     width: 100%;
   }
   overflow-y: auto;
+  height: 100vh;
   &__list {
     list-style: none;
     padding-left: 5px;

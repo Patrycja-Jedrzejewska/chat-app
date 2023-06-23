@@ -239,7 +239,7 @@ export const useUserStore = defineStore('UserStore', {
               guestsIds: guestsIds,
             })
 
-            await this.fetchContactDetails(this.contacts, roomId)
+            await this.fetchContactDetails(roomId)
           }
         }
       } catch (error) {
@@ -251,22 +251,35 @@ export const useUserStore = defineStore('UserStore', {
       try {
         const user = this.user // get current user
         const userRoomsRef = collection(db, 'rooms')
-        const userRoomsQuery = query(userRoomsRef, where('ownerId', '==', user.uid))
-        const userRoomsSnapshot = await getDocs(userRoomsQuery)
 
-        const roomDetailsPromises = userRoomsSnapshot.docs.map(async (doc) => {
+        // Get all rooms
+        const allRoomsSnapshot = await getDocs(userRoomsRef)
+
+        const roomDetailsPromises = allRoomsSnapshot.docs.map(async (doc) => {
           const roomData = doc.data()
-          const roomDetail = {
-            id: doc.id,
-            roomName: roomData.roomName,
-            ownerId: roomData.ownerId,
-            guestsIds: roomData.guestsIds,
+          const guestsIds = roomData.guestsIds
+
+          // Check if the current user is present in guestsIds or is the owner
+          const isGuest = guestsIds.some((guest) => guest.id === user.uid)
+          const isOwner = roomData.ownerId === user.uid
+
+          if (isGuest || isOwner) {
+            // User is a guest or the owner in this room
+            const roomDetail = {
+              id: doc.id,
+              roomName: roomData.roomName,
+              ownerId: roomData.ownerId,
+              guestsIds: guestsIds,
+            }
+            return roomDetail
+          } else {
+            // User is not a guest or the owner in this room
+            return null
           }
-          return roomDetail
         })
 
         const roomDetails = await Promise.all(roomDetailsPromises)
-        this.rooms = roomDetails
+        this.rooms = roomDetails.filter((room) => room !== null)
       } catch (error) {
         throw new Error(error)
       }
@@ -375,16 +388,17 @@ export const useUserStore = defineStore('UserStore', {
       }
     },
     //get other users to the users table
-    async fetchContactDetails(contactIds, roomId) {
+    async fetchContactDetails(roomId) {
       try {
         const userDetails = []
 
-        for (const contactId of contactIds) {
+        for (const contactId of this.contacts) {
           try {
             const userSnapshot = await getDoc(doc(db, 'users', contactId))
-            const userData = userSnapshot.exists() ? userSnapshot.data() : null
 
-            if (userData) {
+            if (userSnapshot.exists()) {
+              const userData = userSnapshot.data()
+
               const isGuest = await this.isGuestInRoom(contactId, roomId)
               const userDetail = {
                 id: contactId,
@@ -394,12 +408,14 @@ export const useUserStore = defineStore('UserStore', {
                 initial: userData.initial,
                 isGuest: isGuest,
               }
+
               userDetails.push(userDetail)
             }
           } catch (error) {
             console.error(`Error fetching contact details for contactId: ${contactId}`, error)
           }
         }
+
         this.users = userDetails
       } catch (error) {
         console.error('Error fetching contact details:', error)

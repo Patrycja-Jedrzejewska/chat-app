@@ -14,10 +14,10 @@
       </button>
     </div>
 
-    <div v-if="hasContact" class="conversation__chat">
-      <Chat :contact-id="contactId" />
+    <div class="conversation__chat">
+      <Chat :room-id="roomId" />
     </div>
-    <div v-else class="conversation__empty-chat"></div>
+    <!--<div v-else class="conversation__empty-chat"></div>-->
 
     <div v-if="showConversationSettingsComputed">
       <ConversationSettings :room-id="roomId" @close-modal="closeConversationSettings" />
@@ -42,9 +42,8 @@ export default defineComponent({
     const router = useRouter()
     const userStore = useUserStore()
     const roomId = ref('')
-    const contactDisplayName = ref('')
     const hasRoom = ref(false)
-    const contactsArray = userStore.users
+
     const windowWidth = ref(window.innerWidth)
     const showConversationSettings = ref(false)
     const rooms = userStore.rooms
@@ -53,15 +52,9 @@ export default defineComponent({
       windowWidth.value = window.innerWidth
     }
 
-    const updateContactDisplayName = () => {
-      const newContactId = router.currentRoute.value.params.contactId
-      const contact = contactsArray.find((user) => user.id === newContactId)
-      contactDisplayName.value = contact ? contact.displayName : ''
-    }
-
     onMounted(() => {
       roomId.value = router.currentRoute.value.params.roomId
-      updateContactDisplayName()
+
       window.addEventListener('resize', handleResize)
     })
 
@@ -73,7 +66,6 @@ export default defineComponent({
       () => router.currentRoute.value.params.roomId,
       (newRoomId) => {
         roomId.value = newRoomId
-        updateContactDisplayName()
       }
     )
 
@@ -108,7 +100,6 @@ export default defineComponent({
     })
     return {
       roomId,
-      contactDisplayName,
       hasRoom,
       goBack,
       windowWidth,
@@ -152,13 +143,10 @@ export default defineComponent({
     }
   }
   &__chat {
-    height: calc(100vh - 65px);
+    height: calc(100vh - 42px);
+    margin-top: 0;
     overflow-y: auto;
     display: flex;
-    @media only screen and (min-width: 768px) {
-      margin-top: 0;
-      height: 100vh;
-    }
   }
 }
 

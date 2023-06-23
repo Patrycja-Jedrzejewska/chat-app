@@ -1,6 +1,6 @@
 <template>
   <div v-if="messages.length > 0" class="messages">
-    <Message v-for="message in messages" :key="message.id" :message="message" />
+    <Message v-for="message in messages" :key="message.id" :message="message" :room-id="roomId" />
   </div>
   <div v-else>Brak wiadomości</div>
 </template>
@@ -8,7 +8,6 @@
 import { ref, watch, onUnmounted } from 'vue'
 import { getMessages } from '../chat/index'
 import Message from './Message.vue'
-import { auth } from '../firebase/index'
 import { scrollToBottom } from '../utilities/scroll'
 
 export default {
@@ -16,26 +15,29 @@ export default {
     Message,
   },
   props: {
-    contactId: {
+    roomId: {
       type: String,
       required: true,
     },
   },
   setup(props) {
     const messages = ref([])
-    let unsubscribe = null
+    const unsubscribe = ref(null)
 
     const fetchMessages = async () => {
-      unsubscribe = await getMessages(auth.currentUser, messages, props.contactId)
+      unsubscribe.value = await getMessages(messages, props.roomId)
+
       scrollToBottom()
     }
 
     watch(
-      () => props.contactId,
+      () => props.roomId,
       async () => {
         try {
-          await unsubscribe()
-          unsubscribe = null
+          if (unsubscribe.value) {
+            await unsubscribe.value()
+            unsubscribe.value = null
+          }
           await fetchMessages()
         } catch (error) {
           throw new Error(error)
@@ -45,7 +47,9 @@ export default {
 
     onUnmounted(async () => {
       try {
-        await unsubscribe()
+        if (unsubscribe.value) {
+          await unsubscribe.value()
+        }
       } catch (error) {
         throw new Error(error)
       }

@@ -1,10 +1,10 @@
 <template>
   <div class="chat">
     <div class="chat__messages">
-      <Messages :contact-id="contactId" />
+      <Messages :room-id="roomId" />
     </div>
     <div class="chat__new-message">
-      <NewMessage :contact-id="contactId" />
+      <NewMessage :room-id="roomId" />
     </div>
   </div>
 </template>
@@ -20,7 +20,7 @@ export default defineComponent({
     NewMessage,
   },
   props: {
-    contactId: {
+    roomId: {
       type: String,
       required: true,
     },
@@ -31,7 +31,8 @@ export default defineComponent({
 .chat {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: calc(100vh - 52px);
+  top: 62px;
   width: 100vw;
   @media only screen and (min-width: 768px) {
     width: calc(100vw - 360px);
