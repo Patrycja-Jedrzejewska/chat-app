@@ -1,6 +1,9 @@
 <template>
   <div class="rooms">
-    <button class="rooms__add-new" @click="openCreateNewRoom">Create new room</button>
+    <div class="rooms__buttons">
+      <button class="btn rooms__button rooms__button--logout" @click="logout">Logout</button>
+      <button class="btn rooms__button rooms__button--add-new" @click="openCreateNewRoom">Create new room</button>
+    </div>
     <ul v-if="roomsLoaded" class="rooms__list">
       <li v-for="room in rooms" :key="room.id" class="room" :class="{ 'room--selected': room.id === selectedRoomId }">
         <router-link :to="`/conversation/${room.id}`" class="room__link link">
@@ -64,7 +67,9 @@ export default defineComponent({
     const updateRooms = () => {
       rooms.value = userStore.rooms
     }
-
+    const logout = () => {
+      userStore.logout()
+    }
     watch(() => userStore.rooms, updateRooms)
 
     return {
@@ -77,6 +82,7 @@ export default defineComponent({
       showCreateNewRoomComputed,
       user,
       updateRooms,
+      logout,
     }
   },
 })

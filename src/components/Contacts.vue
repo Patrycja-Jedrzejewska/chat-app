@@ -131,11 +131,8 @@ export default {
 </script>
 <style scoped lang="scss">
 .contacts {
-  background-color: #ffffff;
-  @media only screen and (min-width: 600px) {
-    width: 100%;
-  }
-  overflow-y: auto;
+  background-color: #fff;
+
   &__list {
     list-style: none;
     padding-left: 5px;
@@ -153,6 +150,7 @@ export default {
   align-content: center;
   margin: 10px;
   height: 70px;
+  width: 360px;
   padding: 5px 10px;
   background-color: #fff;
   border-radius: 20px;
@@ -172,6 +170,7 @@ export default {
   }
   &__details {
     display: flex;
+    width: 260px;
     flex-direction: column;
   }
   &__field {
@@ -183,6 +182,14 @@ export default {
       color: #00a9a5;
     }
   }
+}
+.btn--delete-guest {
+  width: 30px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
 .contact {
   &--selected {

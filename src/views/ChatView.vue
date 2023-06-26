@@ -67,9 +67,9 @@ export default {
 .chatview {
   display: flex;
   width: 100vw;
+  height: 100vh;
   &__conversation {
-    @media only screen and (min-width: 768px) {
-    }
+    height: 100vh;
   }
   &__rooms {
     display: flex;

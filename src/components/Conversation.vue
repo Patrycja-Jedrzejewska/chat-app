@@ -140,7 +140,7 @@ export default defineComponent({
     }
   }
   &__chat {
-    height: calc(100vh - 42px);
+    height: calc(100vh - 52px);
     margin-top: 0;
     overflow-y: auto;
     display: flex;

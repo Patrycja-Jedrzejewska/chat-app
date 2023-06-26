@@ -73,48 +73,13 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+.settings {
   display: flex;
-  z-index: 9999;
-
-  &__overlay {
+  &__buttons {
     display: flex;
-    position: absolute;
-    justify-content: center;
-    align-items: center;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
   }
-
-  &__content {
-    display: flex;
-    width: 400px;
-    height: fit-content;
-    flex-direction: column;
-    align-items: center;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-  }
-
-  &__close {
-    display: flex;
-    align-self: flex-end;
-    flex-direction: row-reverse;
-    position: relative;
-    right: 10px;
-    background: none;
-    border: none;
-    width: 100px;
-    cursor: pointer;
+  &__button {
+    width: 150px;
   }
 }
 </style>
