@@ -54,7 +54,7 @@
 
           <!-- Google button -->
           <button class="btn-primary btn btn--google" @click="GoogleSignIn">
-            <img src="../assets/google-icon.svg" alt="Google icon" class="google-icon" />
+            <img src="../assets/google-icon.svg" alt="Google icon" class="icon icon--google" />
             Sign in with google
           </button>
 
@@ -116,7 +116,7 @@ export default {
   align-items: center;
   justify-content: center;
 }
-.google-icon {
+.icon--google {
   width: 20px;
   margin-right: 10px;
 }

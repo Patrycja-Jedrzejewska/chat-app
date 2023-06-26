@@ -6,11 +6,11 @@
         class="conversation__info conversation__info--btn btn btn--goBack"
         @click="goBack"
       >
-        <img src="../assets/goBack-icon.svg" alt="go back icon" class="icon" />
+        <img src="../assets/goBack-icon.svg" alt="go back icon" class="icon icon--go-back" />
       </button>
       <h3 class="conversation__info conversation__info--title">{{ roomName }}</h3>
       <button class="conversation__info conversation__info--btn btn btn--settings" @click="openConversationSettings">
-        <img src="../assets/settings-icon.svg" alt="settings icon" class="icon" />
+        <img src="../assets/settings-icon.svg" alt="settings icon" class="icon icon--settings" />
       </button>
     </div>
     <div class="conversation__chat">

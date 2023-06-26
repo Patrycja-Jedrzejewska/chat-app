@@ -8,7 +8,7 @@
       @keyup.enter="sendNewMessage"
     />
     <button class="new-message__send-btn" @click="sendNewMessage">
-      <img src="../assets/send-icon.svg" alt="Send icon" class="icon" />
+      <img src="../assets/send-icon.svg" alt="Send icon" class="icon icon--send" />
     </button>
   </div>
 </template>

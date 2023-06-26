@@ -1,8 +1,12 @@
 <template>
   <div class="rooms">
     <div class="rooms__buttons">
-      <button class="btn rooms__button rooms__button--logout" @click="logout">Logout</button>
-      <button class="btn rooms__button rooms__button--add-new" @click="openCreateNewRoom">Create new room</button>
+      <button class="btn rooms__button rooms__button--logout" @click="logout">
+        <img src="../assets/logout-icon.svg" alt="Logout icon" class="icon icon--logout" /> Logout
+      </button>
+      <button class="btn rooms__button rooms__button--add-new" @click="openCreateNewRoom">
+        <img src="../assets/newRoom-icon.svg" alt="Create new room icon" class="icon icon--newRoom" /> Create new room
+      </button>
     </div>
     <ul v-if="roomsLoaded" class="rooms__list">
       <li v-for="room in rooms" :key="room.id" class="room" :class="{ 'room--selected': room.id === selectedRoomId }">
@@ -145,10 +149,43 @@ export default defineComponent({
 }
 .room {
   &--selected {
-    background-color: #f98f62 !important;
-    .room__field--email {
+    background-color: #00a9a5 !important;
+    color: #fff;
+    .room__details {
       color: #fff;
     }
   }
+}
+.rooms {
+  &__buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+  }
+  &__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 3px;
+    border: solid;
+    border-width: 1px;
+    border-color: #f98f62;
+    &:hover {
+      background-color: rgba(255, 161, 122, 0.25);
+      box-shadow: 0 0 0.2rem 0.1rem rgba(255, 161, 122, 0.6);
+    }
+  }
+}
+.room {
+  border: solid;
+  border-width: 1px;
+  border-color: #005b5e;
+  height: 55px;
+}
+.icon {
+  width: 26px;
+  margin-right: 5px;
 }
 </style>
