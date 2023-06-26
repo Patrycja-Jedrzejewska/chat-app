@@ -23,7 +23,7 @@
 </template>
 <script>
 import { useUserStore } from '../store/UserStore'
-import { defineComponent, ref, watch, computed, onMounted, onUnmounted } from 'vue'
+import { defineComponent, ref, watch, watchEffect, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Chat from '../components/Chat.vue'
 import ConversationSettings from './ConversationSettings.vue'
@@ -39,8 +39,7 @@ export default defineComponent({
     const router = useRouter()
     const userStore = useUserStore()
     const roomId = ref('')
-    const hasRoom = ref(false)
-
+    const roomName = ref('')
     const windowWidth = ref(window.innerWidth)
     const showConversationSettings = ref(false)
     const rooms = userStore.rooms
@@ -51,13 +50,17 @@ export default defineComponent({
 
     onMounted(() => {
       roomId.value = router.currentRoute.value.params.roomId
-
       window.addEventListener('resize', handleResize)
     })
 
     onUnmounted(() => {
       window.removeEventListener('resize', handleResize)
     })
+
+    const updateRoomName = () => {
+      const index = rooms.findIndex((room) => room.id === roomId.value)
+      roomName.value = userStore.rooms[index]?.roomName || roomName.value
+    }
 
     watch(
       () => router.currentRoute.value.params.roomId,
@@ -66,23 +69,13 @@ export default defineComponent({
       }
     )
 
-    watch(roomId, () => {
-      hasRoom.value = !!roomId.value
+    watchEffect(() => {
+      updateRoomName()
     })
 
     const goBack = () => {
       emit('go-back')
     }
-
-    const roomName = ref('')
-
-    watch(
-      () => roomId.value,
-      (newRoomId) => {
-        const room = rooms.find((room) => room.id === newRoomId)
-        roomName.value = room ? room.roomName : ''
-      }
-    )
 
     const openConversationSettings = () => {
       showConversationSettings.value = true
@@ -95,9 +88,9 @@ export default defineComponent({
     const showConversationSettingsComputed = computed(() => {
       return showConversationSettings.value
     })
+
     return {
       roomId,
-      hasRoom,
       goBack,
       windowWidth,
       mobileWidth,
@@ -107,6 +100,7 @@ export default defineComponent({
       roomName,
       openConversationSettings,
       closeConversationSettings,
+      updateRoomName,
     }
   },
 })
