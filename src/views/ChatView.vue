@@ -3,7 +3,7 @@
     <div v-if="showRooms" class="chatview__rooms">
       <Rooms @selected-room="handleRoomSelection" />
     </div>
-    <div v-if="hasSelectedRoom" class="chatview__conversation">
+    <div v-if="selectedRoomId" class="chatview__conversation">
       <Conversation @go-back="goBack" />
     </div>
   </div>
@@ -12,7 +12,8 @@
 import { mobileWidth } from '../utilities/breakpoints'
 import Rooms from '../components/Rooms.vue'
 import Conversation from '../components/Conversation.vue'
-import { ref, onMounted, onBeforeMount, computed } from 'vue'
+import { ref, onMounted, watch, onBeforeMount, computed } from 'vue'
+import router from '../router'
 
 export default {
   name: 'ChatView',
@@ -40,16 +41,20 @@ export default {
       selectedRoomId.value = roomId
     }
 
-    const hasSelectedRoom = computed(() => {
-      return selectedRoomId.value !== ''
-    })
-
     const goBack = () => {
       selectedRoomId.value = ''
     }
+    watch(selectedRoomId, (isSelected) => {
+      if (!isSelected) {
+        router.push('/')
+      }
+    })
 
     const showRooms = computed(() => {
-      return windowWidth.value >= mobileWidth || (windowWidth.value < mobileWidth && selectedRoomId.value === '')
+      return (
+        windowWidth.value >= mobileWidth ||
+        (windowWidth.value < mobileWidth && (selectedRoomId.value == undefined || selectedRoomId.value == ''))
+      )
     })
 
     return {
@@ -58,7 +63,6 @@ export default {
       goBack,
       showRooms,
       handleRoomSelection,
-      hasSelectedRoom,
     }
   },
 }

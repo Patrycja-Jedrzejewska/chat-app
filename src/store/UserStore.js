@@ -362,16 +362,13 @@ export const useUserStore = defineStore('UserStore', {
         await this.updateAdditionalUserInfo(user) //adding a color and initial for a new user
         await this.getContactIds() //assigning contacts from firebase to local contacts table
 
-        // Sprawdź, czy użytkownik już ma swoje pokoje
         const userRoomsRef = collection(db, 'rooms')
         const userRoomsQuery = query(userRoomsRef, where('ownerId', '==', user.uid))
         const userRoomsSnapshot = await getDocs(userRoomsQuery)
 
         if (userRoomsSnapshot.size == 0) {
-          // Jeżeli użytkownik ma już swoje pokoje, zakończ funkcję
           await this.createRoomDocument('', user)
         }
-
         router.push('/')
       } catch (error) {
         throw new Error(error)

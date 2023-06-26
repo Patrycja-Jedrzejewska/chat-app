@@ -26,7 +26,6 @@ export default {
 
     const fetchMessages = async () => {
       unsubscribe.value = await getMessages(messages, props.roomId)
-
       scrollToBottom()
     }
 
@@ -34,6 +33,10 @@ export default {
       () => props.roomId,
       async () => {
         try {
+          if (!props.roomId || props.roomId == '' || props.roomId == undefined) {
+            console.log(`room doesn't exists`)
+            return
+          }
           if (unsubscribe.value) {
             await unsubscribe.value()
             unsubscribe.value = null
