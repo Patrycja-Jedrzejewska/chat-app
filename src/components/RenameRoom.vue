@@ -1,9 +1,8 @@
 <template>
   <div class="modal">
-    <div class="modal__overlay">
-      <div class="modal__content rename-room">
+    <div class="modal__overlay" @click="closeRenameModal">
+      <div class="modal__content rename-room" @click.stop>
         <button class="modal__close" @click="closeRenameModal">Close</button>
-
         <form class="form rename-room__form" @submit.prevent="renameRoom">
           <h2 class="form__title">Rename Room</h2>
           <input

@@ -1,7 +1,7 @@
 <template>
   <div class="modal">
-    <div class="modal__overlay">
-      <div class="modal__content settings">
+    <div class="modal__overlay" @click="closeModal">
+      <div class="modal__content settings" @click.stop>
         <button class="modal__close" @click="closeModal">Close</button>
         <h2>Conversation Settings</h2>
         <div class="settings__buttons">

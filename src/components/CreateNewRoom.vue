@@ -1,7 +1,7 @@
 <template>
   <div class="modal">
-    <div class="modal__overlay">
-      <div class="modal__content create-room">
+    <div class="modal__overlay" @click="closeModal">
+      <div class="modal__content create-room" @click.stop>
         <button class="modal__close" @click="closeModal">Close</button>
         <form class="form create-room__form" @submit.prevent="createNewRoom">
           <h2 class="form__title">Create New Room</h2>
