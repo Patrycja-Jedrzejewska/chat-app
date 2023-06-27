@@ -28,7 +28,7 @@ const router = createRouter({
       meta: { requiresAuth: true },
       children: [
         {
-          path: 'conversation/:contactId',
+          path: 'conversation/:roomId',
           name: 'Conversation',
           component: Conversation,
           props: true,

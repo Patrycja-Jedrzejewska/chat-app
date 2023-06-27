@@ -8,7 +8,7 @@
   </div>
 </template>
 <script>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { auth } from '../firebase/index'
 import Avatar from './Avatar.vue'
 import { useUserStore } from '../store/UserStore'
@@ -22,30 +22,33 @@ export default {
       type: Object,
       required: true,
     },
+    roomId: {
+      type: Object,
+      required: true,
+    },
   },
   setup(props) {
     const userStore = useUserStore()
     const user = ref({
-      displayName: '',
       color: '',
       initial: '',
     })
 
     const fetchUserDetails = async () => {
       try {
-        await userStore.fetchContactDetails([props.message.senderId])
+        await userStore.fetchContactDetails(props.roomId)
+
         const foundUser = userStore.users.find((user) => user.id === props.message.senderId)
         user.value = {
-          displayName: foundUser.displayName,
-          color: foundUser.color,
-          initial: foundUser.initial,
+          color: foundUser ? foundUser.color : '',
+          initial: foundUser ? foundUser.initial : '',
         }
       } catch (error) {
         throw new Error(error)
       }
     }
 
-    fetchUserDetails()
+    onMounted(fetchUserDetails)
 
     const currentUser = computed(() => {
       const currentUser = auth.currentUser

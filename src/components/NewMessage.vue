@@ -8,7 +8,7 @@
       @keyup.enter="sendNewMessage"
     />
     <button class="new-message__send-btn" @click="sendNewMessage">
-      <img src="../assets/send-icon.svg" alt="Send icon" class="icon" />
+      <img src="../assets/send-icon.svg" alt="Send icon" class="icon icon--send" />
     </button>
   </div>
 </template>
@@ -20,7 +20,7 @@ import { scrollToBottom } from '../utilities/scroll'
 
 export default {
   props: {
-    contactId: {
+    roomId: {
       type: String,
       required: true,
     },
@@ -35,7 +35,7 @@ export default {
 
     const sendNewMessage = async () => {
       try {
-        await sendMessage(user, newMessage, props.contactId)
+        await sendMessage(user, newMessage, props.roomId)
         newMessage.value = ''
         scrollToBottom()
       } catch (error) {

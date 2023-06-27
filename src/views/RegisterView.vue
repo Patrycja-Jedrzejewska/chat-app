@@ -6,15 +6,15 @@
         <!-- Email input -->
         <section class="form-floating form__group">
           <input
+            id="email"
+            v-model="email"
             type="email"
             autocomplete="email"
             placeholder="name@example.com"
             required
-            id="email"
             :class="{ 'is-invalid': $v.email.$error }"
-            v-model="email"
-            @keyup="$v.email.$touch()"
             class="form-control form__input form__input--email"
+            @keyup="$v.email.$touch()"
           />
           <label for="email" class="form-label form__label">Email address</label>
           <div v-if="$v?.email?.$errors?.length" class="invalid-feedback form__error">
@@ -24,14 +24,14 @@
         <!-- Password input -->
         <section class="form-floating form__group">
           <input
+            id="password"
+            v-model="password"
             type="password"
             autocomplete="new-password"
             placeholder="Password"
-            id="password"
             :class="{ 'is-invalid': $v.password.$error }"
-            v-model="password"
-            @keyup="$v.password.$touch()"
             class="form-control form__input form__input--password"
+            @keyup="$v.password.$touch()"
           />
           <label for="password" class="form__label">Password</label>
           <div v-if="$v?.password?.$errors?.length" class="invalid-feedback form__error">
@@ -41,15 +41,15 @@
         <!-- Password check -->
         <section class="form-floating form__group">
           <input
+            id="cPassword"
+            v-model="cPassword"
             type="password"
             autocomplete="off"
             placeholder="Confirm password"
             required
-            id="cPassword"
             :class="{ 'is-invalid': $v.cPassword.$error }"
-            v-model="cPassword"
-            @keyup="$v.cPassword.$touch()"
             class="form-control form__input form__input--cPassword"
+            @keyup="$v.cPassword.$touch()"
           />
           <label for="cPassword" class="form__label">Confirm Password</label>
           <div v-if="$v?.cPassword?.$errors?.length" class="invalid-feedback form__error">
