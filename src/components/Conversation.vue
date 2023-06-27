@@ -121,7 +121,7 @@ export default defineComponent({
   &__info {
     display: flex;
     align-items: center;
-
+    
     &--btn {
       justify-content: center;
       width: 40px;
@@ -134,7 +134,10 @@ export default defineComponent({
     }
   }
   &__chat {
-    height: calc(100vh - 52px);
+    height: calc(100vh - 90px);
+    @media only screen and (min-width: 355px) {
+      height: calc(100vh - 52px);
+    }
     margin-top: 0;
     overflow-y: auto;
     display: flex;

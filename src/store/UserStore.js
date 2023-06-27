@@ -110,6 +110,9 @@ export const useUserStore = defineStore('UserStore', {
         }
 
         const userRoomsRef = collection(db, 'rooms')
+        if (roomName == undefined || roomName=='') {
+          roomName.value = user.displayName + `'s room`
+        }
         const duplicateRoomQuery = query(
           userRoomsRef,
           where('ownerId', '==', user.uid),
@@ -117,13 +120,12 @@ export const useUserStore = defineStore('UserStore', {
         )
 
         const duplicateRoomSnapshot = await getDocs(duplicateRoomQuery)
+        
         if (!duplicateRoomSnapshot.empty) {
           throw new Error('Room name already exists.')
         }
         this.roomCreationError = null
-        if (roomName == '') {
-          roomName.value = user.displayName + `'s room`
-        }
+        
         const roomDetails = {
           id: roomId,
           roomName: roomName.value,

@@ -104,7 +104,9 @@ export default {
     }
     const isOwner = (contact) => {
       const guestRoom = userStore.rooms.find((room) => room.id === props.roomId)
-
+      if(!guestRoom){
+        return
+      }
       return contact.id === guestRoom.ownerId
     }
     watch(contacts, (newContacts) => {
@@ -199,10 +201,10 @@ export default {
     }
   }
   &--guest {
-    background-color: lightblue;
+    background-color: rgb(155, 233, 249);
   }
   &--owner {
-    background-color: blue;
+    background-color: rgb(115, 250, 185);
   }
 }
 </style>
