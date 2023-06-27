@@ -3,7 +3,9 @@
     <div class="addGuests__contacts">
       <Contacts :room-id="roomId" @guests-selected="handleGuestsSelected" />
     </div>
-    <button class="addGuests__btn" :disabled="selectedGuests.length === 0" @click="addGuestsToRoom">Add to room</button>
+    <button class="btn btn-primary addGuests__btn" :disabled="selectedGuests.length === 0" @click="addGuestsToRoom">
+      Add to room
+    </button>
   </div>
 </template>
 <script>
@@ -50,11 +52,20 @@ export default {
 .addGuests {
   display: flex;
   flex-direction: column;
-
+  margin-bottom: 10px;
   &__btn {
-    margin-top: 10px;
     width: 200px;
     align-self: center;
+    background-color: #f98f62;
+    color: #fff;
+    &:disabled {
+      color: rgba(0, 0, 0, 0.9);
+      background-color: rgba(249, 143, 98, 0.9);
+    }
+    &:hover {
+      background-color: #f98f62;
+      box-shadow: 0 0 0.2rem 0.1rem rgba(255, 161, 122, 0.8);
+    }
   }
 }
 </style>

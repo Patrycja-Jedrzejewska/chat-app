@@ -132,12 +132,11 @@ export default {
 <style scoped lang="scss">
 .contacts {
   background-color: #fff;
-
   &__list {
     list-style: none;
     padding-left: 5px;
     padding-right: 5px;
-    margin-top: 20px;
+    margin-top: 25px;
   }
   &__emptylist {
     text-align: center;
@@ -190,6 +189,7 @@ export default {
   align-items: center;
   justify-content: center;
   padding: 0;
+  border-radius: 5px;
 }
 .contact {
   &--selected {

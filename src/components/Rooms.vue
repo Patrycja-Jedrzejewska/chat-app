@@ -109,16 +109,39 @@ export default defineComponent({
     text-align: center;
     color: gray;
   }
+  &__buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+  }
+  &__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 3px;
+    border: solid;
+    border-width: 1px;
+    border-color: #f98f62;
+    &:hover {
+      background-color: rgba(255, 161, 122, 0.25);
+      box-shadow: 0 0 0.2rem 0.1rem rgba(255, 161, 122, 0.6);
+    }
+  }
 }
 .room {
   display: flex;
   align-items: center;
   align-content: center;
   margin: 10px;
-  height: 70px;
   padding: 5px 10px;
   background-color: #ffffff;
   border-radius: 20px;
+  border: solid;
+  border-width: 1px;
+  border-color: #005b5e;
+  height: 55px;
   &:hover {
     box-shadow: 0 0 0.5rem 0.1rem rgba(0, 91, 94, 0.25);
   }
@@ -156,33 +179,8 @@ export default defineComponent({
     }
   }
 }
-.rooms {
-  &__buttons {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 10px;
-  }
-  &__button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
 
-    margin: 3px;
-    border: solid;
-    border-width: 1px;
-    border-color: #f98f62;
-    &:hover {
-      background-color: rgba(255, 161, 122, 0.25);
-      box-shadow: 0 0 0.2rem 0.1rem rgba(255, 161, 122, 0.6);
-    }
-  }
-}
 .room {
-  border: solid;
-  border-width: 1px;
-  border-color: #005b5e;
-  height: 55px;
 }
 .icon {
   width: 26px;

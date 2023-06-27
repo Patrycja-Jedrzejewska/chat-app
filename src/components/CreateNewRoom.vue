@@ -18,7 +18,7 @@
           <div v-if="roomCreationError" class="form__error">
             {{ roomCreationError }}
           </div>
-          <button type="submit" class="btn btn-primary btn--submit">Create room</button>
+          <button type="submit" class="btn btn-primary btn--submit" :disabled="isInputEmpty">Create room</button>
         </form>
       </div>
     </div>
@@ -56,58 +56,35 @@ export default {
       return store.roomCreationError
     })
 
+    const isInputEmpty = computed(() => {
+      return roomName.value.trim() === ''
+    })
+
     return {
       roomName,
       createNewRoom,
       closeModal,
       roomCreationError,
+      isInputEmpty,
     }
   },
 }
 </script>
 <style lang="scss" scoped>
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+.form {
   display: flex;
-  z-index: 9999;
-
-  &__overlay {
-    display: flex;
-    position: absolute;
-    justify-content: center;
-    align-items: center;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+  flex-direction: column;
+  justify-content: center;
+  &__title {
+    text-align: center;
   }
-
-  &__content {
-    display: flex;
-    width: 400px;
-    height: fit-content;
-    flex-direction: column;
-    align-items: center;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
+  &__input {
+    margin-top: 20px;
   }
-
-  &__close {
-    display: flex;
-    align-self: flex-end;
-    flex-direction: row-reverse;
-    position: relative;
-    right: 10px;
-    background: none;
-    border: none;
-    width: 100px;
-    cursor: pointer;
+  .btn--submit {
+    &:disabled {
+      background-color: #00a29e;
+    }
   }
 }
 </style>

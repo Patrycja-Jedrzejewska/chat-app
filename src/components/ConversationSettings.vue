@@ -80,6 +80,10 @@ export default {
   }
   &__button {
     width: 150px;
+    border: solid;
+    border-width: 1px;
+    border-color: #005b5e;
+    margin: 8px 5px 0 5px;
   }
 }
 </style>
