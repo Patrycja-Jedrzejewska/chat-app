@@ -1,62 +1,69 @@
 <template>
-    <div class="messages" v-if="messages.length>0">
-        <Message v-for="message in messages" :key="message.id" :message="message" />
-    </div>
-    <div v-else>Brak wiadomości</div>
+  <div v-if="messages.length > 0" class="messages">
+    <Message v-for="message in messages" :key="message.id" :message="message" :room-id="roomId" />
+  </div>
+  <div v-else class="messages--empty">Lack of messages</div>
 </template>
-<script >
+<script>
 import { ref, watch, onUnmounted } from 'vue'
-import { useUserStore } from '../store'
 import { getMessages } from '../chat/index'
 import Message from './Message.vue'
-import { auth } from '../firebase/index'
 import { scrollToBottom } from '../utilities/scroll'
 
 export default {
+  components: {
+    Message,
+  },
   props: {
-    contactId: {
+    roomId: {
       type: String,
       required: true,
     },
   },
-  components: {
-    Message,
-  },
   setup(props) {
-    const userStore = useUserStore();
-    const messages = ref([]);
-    let unsubscribe = null;
+    const messages = ref([])
+    const unsubscribe = ref(null)
 
     const fetchMessages = async () => {
-      unsubscribe = await getMessages(auth.currentUser, messages, props.contactId);
+      unsubscribe.value = await getMessages(messages, props.roomId)
       scrollToBottom()
-    };
+    }
 
     watch(
-      () => props.contactId,
+      () => props.roomId,
       async () => {
-        if (unsubscribe && typeof unsubscribe === 'function') {
-          await unsubscribe(); 
-          unsubscribe = null;
+        try {
+          if (!props.roomId || props.roomId == '' || props.roomId == undefined) {
+            console.log(`room doesn't exists`)
+            return
+          }
+          if (unsubscribe.value) {
+            await unsubscribe.value()
+            unsubscribe.value = null
+          }
+          await fetchMessages()
+        } catch (error) {
+          throw new Error(error)
         }
-        await fetchMessages();
       }
-    );
+    )
 
     onUnmounted(async () => {
-      if (unsubscribe && typeof unsubscribe === 'function') {
-        await unsubscribe();
+      try {
+        if (unsubscribe.value) {
+          await unsubscribe.value()
+        }
+      } catch (error) {
+        throw new Error(error)
       }
-    });
+    })
 
-    fetchMessages();
+    fetchMessages()
 
     return {
       messages,
-    };
+    }
   },
-};
+}
 </script>
-<style scoped lang="scss">
-    
-</style>
+<style scoped lang="scss"></style>
