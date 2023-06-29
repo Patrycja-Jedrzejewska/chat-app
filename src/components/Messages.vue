@@ -34,8 +34,7 @@ export default {
       async () => {
         try {
           if (!props.roomId || props.roomId == '' || props.roomId == undefined) {
-            console.log(`room doesn't exists`)
-            return
+            throw new Error(`room doesn't exists`)
           }
           if (unsubscribe.value) {
             await unsubscribe.value()

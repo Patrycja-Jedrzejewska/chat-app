@@ -94,11 +94,12 @@ export default defineComponent({
 <style scoped lang="scss">
 .rooms {
   background-color: #ffffff;
-  @media only screen and (min-width: 600px) {
-    width: 100%;
-  }
+  width: 100%;
   overflow-y: auto;
   height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   &__list {
     list-style: none;
     padding-left: 5px;
@@ -132,8 +133,6 @@ export default defineComponent({
 }
 .room {
   display: flex;
-  align-items: center;
-  align-content: center;
   margin: 10px;
   padding: 5px 10px;
   background-color: #ffffff;
@@ -142,6 +141,10 @@ export default defineComponent({
   border-width: 1px;
   border-color: #005b5e;
   height: 55px;
+  min-width: 350px;
+  @media only screen and (min-width: 768px) {
+      min-width: 340px;
+    }
   &:hover {
     box-shadow: 0 0 0.5rem 0.1rem rgba(0, 91, 94, 0.25);
   }
@@ -169,8 +172,6 @@ export default defineComponent({
       color: #00a9a5;
     }
   }
-}
-.room {
   &--selected {
     background-color: #00a9a5 !important;
     color: #fff;
@@ -178,9 +179,6 @@ export default defineComponent({
       color: #fff;
     }
   }
-}
-
-.room {
 }
 .icon {
   width: 26px;
