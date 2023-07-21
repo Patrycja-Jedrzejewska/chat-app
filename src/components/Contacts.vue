@@ -1,17 +1,11 @@
 <template>
   <div class="contacts">
     <ul v-if="contacts" class="contacts__list">
-      <li
-        v-for="contact in contacts"
-        :key="contact.id"
-        class="contact"
-        :class="{
-          'contact--selected': contact.selected,
-          'contact--guest': isGuest(contact),
-          'contact--owner': isOwner(contact),
-        }"
-        @click="toggleContactSelection(contact)"
-      >
+      <li v-for="contact in contacts" :key="contact.id" class="contact" :class="{
+        'contact--selected': contact.selected,
+        'contact--guest': isGuest(contact),
+        'contact--owner': isOwner(contact),
+      }" @click="toggleContactSelection(contact)">
         <div class="contact__avatar">
           <Avatar :color="contact.color" :initial="contact.initial" />
         </div>
@@ -104,7 +98,7 @@ export default {
     }
     const isOwner = (contact) => {
       const guestRoom = userStore.rooms.find((room) => room.id === props.roomId)
-      if(!guestRoom){
+      if (!guestRoom) {
         return
       }
       return contact.id === guestRoom.ownerId
@@ -134,17 +128,20 @@ export default {
 <style scoped lang="scss">
 .contacts {
   background-color: #fff;
+
   &__list {
     list-style: none;
     padding-left: 5px;
     padding-right: 5px;
     margin-top: 25px;
   }
+
   &__emptylist {
     text-align: center;
     color: gray;
   }
 }
+
 .contact {
   display: flex;
   align-items: center;
@@ -155,9 +152,11 @@ export default {
   padding: 5px 10px;
   background-color: #fff;
   border-radius: 20px;
+
   &:hover {
     box-shadow: 0 0 0.5rem 0.1rem rgba(0, 91, 94, 0.25);
   }
+
   &__link {
     display: flex;
     align-items: center;
@@ -165,25 +164,30 @@ export default {
     text-decoration: none;
     width: 100%;
   }
+
   &__avatar {
     margin-right: 10px;
     scale: 110%;
   }
+
   &__details {
     display: flex;
     width: 260px;
     flex-direction: column;
   }
+
   &__field {
     &--displayName {
       font-weight: bold;
       font-size: 17px;
     }
+
     &--email {
       color: #00a9a5;
     }
   }
 }
+
 .btn--delete-guest {
   width: 30px;
   height: 40px;
@@ -193,18 +197,21 @@ export default {
   padding: 0;
   border-radius: 5px;
 }
+
 .contact {
   &--selected {
     background-color: #f98f62 !important;
+
     .contact__field--email {
       color: #fff;
     }
   }
+
   &--guest {
     background-color: rgb(155, 233, 249);
   }
+
   &--owner {
     background-color: rgb(115, 250, 185);
   }
-}
-</style>
+}</style>

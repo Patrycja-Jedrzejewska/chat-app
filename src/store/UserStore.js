@@ -88,51 +88,47 @@ export const useUserStore = defineStore('UserStore', {
     //create a new room in firebase in the rooms table
     async createRoomDocument(roomName, user) {
       try {
-        // Sprawdź, czy użytkownik już ma swój pokój
-
+        
+        roomName=roomName.value
+        console.log(roomName);
+        if (roomName == undefined || roomName=='' || !roomName) {
+          roomName = user.displayName + `'s room`
+        }
         let roomId = await this.generateUniqueRoomId()
         let roomRef = doc(db, 'rooms', roomId)
-
-        // Sprawdź, czy pokój o wygenerowanym ID już istnieje w bazie danych
+        // Check if the room with the generated ID already exists in the database
         let roomSnapshot = await getDoc(roomRef)
-        let attempts = 1
-        const maxAttempts = 5 // Limit
-
-        while (roomSnapshot.exists() && attempts <= maxAttempts) {
-          roomId = await this.generateUniqueRoomId()
-          roomRef = doc(db, 'rooms', roomId)
-          roomSnapshot = await getDoc(roomRef)
-          attempts++
+        if(roomSnapshot.document!=null){
+          let attempts = 1
+          const maxAttempts = 5 // Limit
+          while (roomSnapshot.exists() && attempts <= maxAttempts) {
+            roomId = await this.generateUniqueRoomId()
+            roomRef = doc(db, 'rooms', roomId)
+            roomSnapshot = await getDoc(roomRef)
+            attempts++
+          }
+          if (attempts > maxAttempts) {
+            throw new Error('Failed to generate a unique room ID.')
+          }
+          const userRoomsRef = collection(db, 'rooms')
+          const duplicateRoomQuery = query(
+            userRoomsRef,
+            where('ownerId', '==', user.uid),
+            where('roomName', '==', roomName.value)
+          )
+          const duplicateRoomSnapshot = await getDocs(duplicateRoomQuery)
+          if (!duplicateRoomSnapshot.empty) {
+            throw new Error('Room already exists.')
+          }
+          this.roomCreationError = null
         }
-
-        if (attempts > maxAttempts) {
-          throw new Error('Failed to generate a unique room ID.')
-        }
-
-        const userRoomsRef = collection(db, 'rooms')
-        if (roomName == undefined || roomName=='') {
-          roomName.value = user.displayName + `'s room`
-        }
-        const duplicateRoomQuery = query(
-          userRoomsRef,
-          where('ownerId', '==', user.uid),
-          where('roomName', '==', roomName.value)
-        )
-
-        const duplicateRoomSnapshot = await getDocs(duplicateRoomQuery)
-        
-        if (!duplicateRoomSnapshot.empty) {
-          throw new Error('Room name already exists.')
-        }
-        this.roomCreationError = null
-        
         const roomDetails = {
           id: roomId,
-          roomName: roomName.value,
+          roomName: roomName,
           ownerId: user.uid,
           guestsIds: [],
         }
-        await setDoc(roomRef, roomDetails)
+        await setDoc(roomRef,roomDetails)
         this.rooms.push(roomDetails)
       } catch (error) {
         this.setRoomCreationError(error.message)
@@ -189,22 +185,6 @@ export const useUserStore = defineStore('UserStore', {
         roomId += characters.charAt(randomIndex)
       }
       return roomId
-    },
-    async fetchGuestIdsForRoom(roomId) {
-      try {
-        const roomRef = doc(db, 'rooms', roomId)
-        const roomSnapshot = await getDoc(roomRef)
-
-        if (roomSnapshot.exists()) {
-          const roomData = roomSnapshot.data()
-          const guestIds = roomData.guestsIds || []
-          return guestIds.map((guest) => guest.id)
-        } else {
-          throw new Error('Room not found')
-        }
-      } catch (error) {
-        throw new Error(error)
-      }
     },
     //add/update guest of room
     async addGuestsToRoom(guest, roomId) {

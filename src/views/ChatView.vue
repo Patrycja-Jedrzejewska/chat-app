@@ -72,14 +72,17 @@ export default {
   display: flex;
   width: 100vw;
   height: 100vh;
+
   &__conversation {
     height: 100vh;
   }
+
   &__rooms {
     display: flex;
     height: 100vh;
     width: 100vw;
     justify-content: center;
+
     @media only screen and (min-width: 768px) {
       width: 360px;
       justify-content: left;

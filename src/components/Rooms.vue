@@ -100,22 +100,26 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   align-items: center;
+
   &__list {
     list-style: none;
     padding-left: 5px;
     padding-right: 5px;
     margin-top: 20px;
   }
+
   &__emptylist {
     text-align: center;
     color: gray;
   }
+
   &__buttons {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-top: 10px;
   }
+
   &__button {
     display: flex;
     align-items: center;
@@ -125,15 +129,17 @@ export default defineComponent({
     border: solid;
     border-width: 1px;
     border-color: #f98f62;
+
     &:hover {
       background-color: rgba(255, 161, 122, 0.25);
       box-shadow: 0 0 0.2rem 0.1rem rgba(255, 161, 122, 0.6);
     }
   }
 }
+
 .room {
   display: flex;
-  margin: 10px;
+  margin-bottom: 10px;
   padding: 5px 10px;
   background-color: #ffffff;
   border-radius: 20px;
@@ -142,12 +148,15 @@ export default defineComponent({
   border-color: #005b5e;
   height: 55px;
   min-width: 350px;
+
   @media only screen and (min-width: 768px) {
-      min-width: 340px;
-    }
+    min-width: 340px;
+  }
+
   &:hover {
     box-shadow: 0 0 0.5rem 0.1rem rgba(0, 91, 94, 0.25);
   }
+
   &__link {
     display: flex;
     align-items: center;
@@ -155,31 +164,38 @@ export default defineComponent({
     text-decoration: none;
     width: 100%;
   }
+
   &__avatar {
     margin-right: 10px;
     scale: 110%;
   }
+
   &__details {
     display: flex;
     flex-direction: column;
   }
+
   &__field {
     &--displayName {
       font-weight: bold;
       font-size: 17px;
     }
+
     &--email {
       color: #00a9a5;
     }
   }
+
   &--selected {
     background-color: #00a9a5 !important;
     color: #fff;
+
     .room__details {
       color: #fff;
     }
   }
 }
+
 .icon {
   width: 26px;
   margin-right: 5px;
