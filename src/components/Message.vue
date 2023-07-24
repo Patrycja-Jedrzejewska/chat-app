@@ -3,7 +3,11 @@
     <div v-if="!isCurrentUser" class="message__avatar">
       <Avatar :color="user.color" :initial="user.initial" />
     </div>
-    <div class="message__text">{{ message.text }}</div>
+    <div class="message__text">{{ message.text }}
+      <div v-if="message.imageURL" class="message__image">
+        <img :src="message.imageURL" class="message__image image" alt="Sent Image" />
+      </div>
+    </div>
     <div class="message__date">{{ message.createdAt }}</div>
   </div>
 </template>
@@ -37,7 +41,7 @@ export default {
     const fetchUserDetails = async () => {
       try {
         await userStore.fetchContactDetails(props.roomId)
-
+        console.log(props.message);
         const foundUser = userStore.users.find((user) => user.id === props.message.senderId)
         user.value = {
           color: foundUser ? foundUser.color : '',
@@ -76,9 +80,13 @@ export default {
   align-items: center;
   margin: 10px;
   flex-wrap: wrap;
+
   &__avatar {
     margin-right: 10px;
+    display: flex;
+    align-self: flex-start;
   }
+
   &__text {
     background-color: #fff;
     font-size: 20px;
@@ -88,6 +96,12 @@ export default {
     word-wrap: break-word;
     border-radius: 15px;
   }
+
+  &__image {
+    max-width: 400px;
+    max-height: 300px;
+  }
+
   &__date {
     font-size: 14px;
     width: 100%;
@@ -96,16 +110,20 @@ export default {
 
 .message--current-user {
   flex-direction: row-reverse;
+
   .message {
     &__text {
       text-align: right;
       background-color: #affffb;
     }
+
+
     &__date {
       text-align: right;
     }
   }
 }
+
 .message--another-user {
   .message {
     &__text {

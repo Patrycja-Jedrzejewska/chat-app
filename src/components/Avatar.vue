@@ -32,6 +32,7 @@ export default {
   width: 35px;
   height: 35px;
   border-radius: 50%;
+
   &__initial {
     font-size: 16px;
     font-weight: bold;

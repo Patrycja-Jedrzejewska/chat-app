@@ -1,12 +1,9 @@
 <template>
   <div class="new-message">
-    <input
-      v-model="newMessage"
-      type="text"
-      class="form-control new-message__input"
-      placeholder="Type a message..."
-      @keyup.enter="sendNewMessage"
-    />
+    <input v-model="newMessage" type="text" class="form-control new-message__input" placeholder="Type a message..."
+      @keyup.enter="sendNewMessage" />
+    <input ref="fileInput" type="file" class="form-control new-message__image-input" accept="image/*"
+      @change="handleImageUpload" />
     <button class="new-message__send-btn" @click="sendNewMessage">
       <img src="../assets/send-icon.svg" alt="Send icon" class="icon icon--send" />
     </button>
@@ -28,15 +25,24 @@ export default {
   setup(props) {
     const user = ref(auth.currentUser)
     const newMessage = ref('')
+    const imageFile = ref(null)
 
     watchEffect(() => {
       user.value = auth.currentUser
     })
 
+    const handleImageUpload = (event) => {
+      const file = event.target.files[0]
+      if (file) {
+        imageFile.value = file
+      }
+    }
+
     const sendNewMessage = async () => {
       try {
-        await sendMessage(user, newMessage, props.roomId)
+        await sendMessage(user, imageFile, newMessage, props.roomId)
         newMessage.value = ''
+        imageFile.value = null
         scrollToBottom()
       } catch (error) {
         throw new Error('Wystąpił błąd podczas wysyłania wiadomości:', error)
@@ -45,8 +51,10 @@ export default {
 
     return {
       user,
+      imageFile,
       newMessage,
       sendNewMessage,
+      handleImageUpload
     }
   },
 }
@@ -58,9 +66,11 @@ export default {
   background-color: #fff;
   margin: 0;
   padding: 10px;
+
   &__input {
     width: 90%;
     height: 40px;
+
     &:focus {
       box-shadow: 0 0 0 0.25rem rgba(2, 94, 0, 0.25);
     }
@@ -70,6 +80,7 @@ export default {
     width: 50px;
     border: none;
     background-color: #fff;
+
     .icon {
       width: 40px;
     }

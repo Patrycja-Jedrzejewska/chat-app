@@ -214,4 +214,5 @@ export default {
   &--owner {
     background-color: rgb(115, 250, 185);
   }
-}</style>
+}
+</style>
