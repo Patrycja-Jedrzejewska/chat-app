@@ -3,7 +3,7 @@
     <div v-if="!isCurrentUser" class="message__avatar">
       <Avatar :color="user.color" :initial="user.initial" />
     </div>
-    <div class="message__text">{{ message.text }}
+    <div v-linkify:options="{ target: '_blank', }" class="message__text">{{ message.text }}
       <div v-if="message.imageURL" class="message__image">
         <img :src="message.imageURL" class="message__image image" alt="Sent Image" />
       </div>
@@ -41,7 +41,6 @@ export default {
     const fetchUserDetails = async () => {
       try {
         await userStore.fetchContactDetails(props.roomId)
-        console.log(props.message);
         const foundUser = userStore.users.find((user) => user.id === props.message.senderId)
         user.value = {
           color: foundUser ? foundUser.color : '',

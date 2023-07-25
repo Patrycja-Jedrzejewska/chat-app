@@ -1,5 +1,5 @@
 <template>
-  <div class="new-message">
+  <div class="new-message" @drop.prevent="handleDrop" @dragover.prevent>
     <input v-model="newMessage" type="text" class="form-control new-message__input" placeholder="Type a message..."
       @keyup.enter="sendNewMessage" />
     <input ref="fileInput" type="file" class="form-control new-message__image-input" accept="image/*"
@@ -31,6 +31,15 @@ export default {
       user.value = auth.currentUser
     })
 
+    const handleDrop = (event) => {
+      const files = event.dataTransfer.files;
+      if (files.length > 0) {
+        const file = files[0];
+        handleImageUpload({ target: { files: [file] } });
+      }
+      console.log('drop');
+    }
+
     const handleImageUpload = (event) => {
       const file = event.target.files[0]
       if (file) {
@@ -40,7 +49,10 @@ export default {
 
     const sendNewMessage = async () => {
       try {
-        await sendMessage(user, imageFile, newMessage, props.roomId)
+        if (newMessage.value != '' && imageFile.value != "") {
+
+          await sendMessage(user, imageFile, newMessage, props.roomId)
+        }
         newMessage.value = ''
         imageFile.value = null
         scrollToBottom()
@@ -54,7 +66,8 @@ export default {
       imageFile,
       newMessage,
       sendNewMessage,
-      handleImageUpload
+      handleImageUpload,
+      handleDrop
     }
   },
 }
