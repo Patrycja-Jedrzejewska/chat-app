@@ -1,11 +1,27 @@
 import { addDoc, collection, query, where, orderBy, getDocs, onSnapshot, Timestamp } from 'firebase/firestore'
-import { db } from '../firebase/index'
+import { db, storage } from '../firebase/index'
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { readAndCompressImage } from 'browser-image-resizer';
 
-export const sendMessage = async (user, newMessage, roomId) => {
+const imageConfig = {
+  quality: 0.7,
+  maxWidth: 600,
+  maxHeight: 600,
+  autoRotate: true
+};
+
+export const sendMessage = async (user, imageFile, newMessage, roomId) => {
   try {
+    let imageURL = null;
+    if (imageFile.value) {
+      const resizedImage = await readAndCompressImage(imageFile.value, imageConfig);
+      const storageRef = ref(storage, `images/${Date.now()}_${imageFile.value.name}`);
+      await uploadBytes(storageRef, resizedImage);
+      imageURL = await getDownloadURL(storageRef);
+    }
     const messageInfo = {
       senderId: user.value.uid,
-
+      imageURL: imageURL, //link to firebase storage
       text: newMessage.value,
       createdAt: Timestamp.fromDate(new Date(Date.now())),
       roomId: roomId,
