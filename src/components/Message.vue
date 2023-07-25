@@ -3,11 +3,13 @@
     <div v-if="!isCurrentUser" class="message__avatar">
       <Avatar :color="user.color" :initial="user.initial" />
     </div>
-    <div v-linkify:options="{ target: '_blank', }" class="message__text">{{ message.text }}
+    <div class="message__content">
+      <div v-linkify:options="{ target: '_blank', }" class="message__text">{{ message.text }}</div>
       <div v-if="message.imageURL" class="message__image">
-        <img :src="message.imageURL" class="message__image image" alt="Sent Image" />
+        <img :src="message.imageURL" class="message__image message__image--img image" alt="Sent Image" />
       </div>
     </div>
+
     <div class="message__date">{{ message.createdAt }}</div>
   </div>
 </template>
@@ -86,19 +88,26 @@ export default {
     align-self: flex-start;
   }
 
-  &__text {
+  &__content {
     background-color: #fff;
-    font-size: 20px;
+
     padding: 5px 15px;
     min-width: 150px;
     max-width: 700px;
-    word-wrap: break-word;
+
     border-radius: 15px;
   }
 
+  &__text {
+    font-size: 20px;
+    word-wrap: break-word;
+  }
+
   &__image {
-    max-width: 400px;
-    max-height: 300px;
+    max-height: 50%;
+    max-width: 100%;
+
+
   }
 
   &__date {
@@ -111,11 +120,14 @@ export default {
   flex-direction: row-reverse;
 
   .message {
-    &__text {
-      text-align: right;
+    &__content {
+
       background-color: #affffb;
     }
 
+    &__text {
+      text-align: right;
+    }
 
     &__date {
       text-align: right;
@@ -125,7 +137,7 @@ export default {
 
 .message--another-user {
   .message {
-    &__text {
+    &__content {
       background-color: #00a1a6;
     }
   }

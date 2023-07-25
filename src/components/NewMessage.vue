@@ -2,6 +2,7 @@
   <div class="new-message" @drop.prevent="handleDrop" @dragover.prevent>
     <input v-model="newMessage" type="text" class="form-control new-message__input" placeholder="Type a message..."
       @keyup.enter="sendNewMessage" />
+    <div v-if="imageFile">{{ imageFile.name }}</div>
     <label for="fileInput" class="custom-add-photo">
       <img src="../assets/add-photo-icon.svg" alt="Add photo icon" class="icon icon--add-photo" />
     </label>
@@ -34,15 +35,6 @@ export default {
       user.value = auth.currentUser
     })
 
-    const handleDrop = (event) => {
-      const files = event.dataTransfer.files;
-      if (files.length > 0) {
-        const file = files[0];
-        handleImageUpload({ target: { files: [file] } });
-      }
-      console.log('drop');
-    }
-
     const handleImageUpload = (event) => {
       const file = event.target.files[0]
       if (file) {
@@ -52,8 +44,7 @@ export default {
 
     const sendNewMessage = async () => {
       try {
-        if (newMessage.value != '' && imageFile.value != "") {
-
+        if (newMessage.value != '' || imageFile.value != "") {
           await sendMessage(user, imageFile, newMessage, props.roomId)
         }
         newMessage.value = ''
@@ -69,8 +60,7 @@ export default {
       imageFile,
       newMessage,
       sendNewMessage,
-      handleImageUpload,
-      handleDrop
+      handleImageUpload
     }
   },
 }

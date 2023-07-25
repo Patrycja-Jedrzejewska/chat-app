@@ -1,11 +1,8 @@
 <template>
   <div class="conversation">
     <div class="conversation__infobar">
-      <button
-        v-if="windowWidth < mobileWidth"
-        class="conversation__info conversation__info--btn btn btn--goBack"
-        @click="goBack"
-      >
+      <button v-if="windowWidth < mobileWidth" class="conversation__info conversation__info--btn btn btn--goBack"
+        @click="goBack">
         <img src="../assets/goBack-icon.svg" alt="go back icon" class="icon icon--go-back" />
       </button>
       <h3 class="conversation__info conversation__info--title">{{ roomName }}</h3>
@@ -114,14 +111,16 @@ export default defineComponent({
     top: 0;
     background-color: #fff;
     width: 100vw;
+
     @media only screen and (min-width: 768px) {
       width: calc(100vw - 360px);
     }
   }
+
   &__info {
     display: flex;
     align-items: center;
-    
+
     &--btn {
       justify-content: center;
       width: 40px;
@@ -129,15 +128,19 @@ export default defineComponent({
       background-color: #fff;
       margin: 0 15px;
     }
+
     &--title {
       text-align: center;
     }
   }
+
   &__chat {
-    height: calc(100vh - 90px);
-    @media only screen and (min-width: 355px) {
+    height: calc(100vh - 62px);
+
+    @media only screen and (min-width: 296px) {
       height: calc(100vh - 52px);
     }
+
     margin-top: 0;
     overflow-y: auto;
     display: flex;

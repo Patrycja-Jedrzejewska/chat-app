@@ -88,15 +88,12 @@ export const useUserStore = defineStore('UserStore', {
     //create a new room in firebase in the rooms table
     async createRoomDocument(roomName, user) {
       try {
-        
         roomName=roomName.value
-        console.log(roomName);
         if (roomName == undefined || roomName=='' || !roomName) {
           roomName = user.displayName + `'s room`
         }
         let roomId = await this.generateUniqueRoomId()
         let roomRef = doc(db, 'rooms', roomId)
-        // Check if the room with the generated ID already exists in the database
         let roomSnapshot = await getDoc(roomRef)
         if(roomSnapshot.document!=null){
           let attempts = 1
@@ -110,18 +107,18 @@ export const useUserStore = defineStore('UserStore', {
           if (attempts > maxAttempts) {
             throw new Error('Failed to generate a unique room ID.')
           }
-          const userRoomsRef = collection(db, 'rooms')
+        }
+        const userRoomsRef = collection(db, 'rooms')
           const duplicateRoomQuery = query(
             userRoomsRef,
             where('ownerId', '==', user.uid),
-            where('roomName', '==', roomName.value)
+            where('roomName', '==', roomName)
           )
           const duplicateRoomSnapshot = await getDocs(duplicateRoomQuery)
           if (!duplicateRoomSnapshot.empty) {
             throw new Error('Room already exists.')
           }
           this.roomCreationError = null
-        }
         const roomDetails = {
           id: roomId,
           roomName: roomName,
