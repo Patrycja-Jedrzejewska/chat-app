@@ -2,7 +2,10 @@
   <div class="new-message" @drop.prevent="handleDrop" @dragover.prevent>
     <input v-model="newMessage" type="text" class="form-control new-message__input" placeholder="Type a message..."
       @keyup.enter="sendNewMessage" />
-    <input ref="fileInput" type="file" class="form-control new-message__image-input" accept="image/*"
+    <label for="fileInput" class="custom-add-photo">
+      <img src="../assets/add-photo-icon.svg" alt="Add photo icon" class="icon icon--add-photo" />
+    </label>
+    <input id="fileInput" ref="fileInput" type="file" class="form-control new-message__image-input" accept="image/*"
       @change="handleImageUpload" />
     <button class="new-message__send-btn" @click="sendNewMessage">
       <img src="../assets/send-icon.svg" alt="Send icon" class="icon icon--send" />
@@ -89,14 +92,22 @@ export default {
     }
   }
 
+  &__image-input {
+    display: none;
+  }
+
+  .icon--add-photo {
+    margin-left: 8px;
+  }
+
   &__send-btn {
     width: 50px;
     border: none;
     background-color: #fff;
+  }
 
-    .icon {
-      width: 40px;
-    }
+  .icon {
+    width: 40px;
   }
 }
 </style>
