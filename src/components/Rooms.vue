@@ -7,17 +7,29 @@
       <button class="btn rooms__button rooms__button--add-new" @click="openCreateNewRoom">
         <img src="../assets/newRoom-icon.svg" alt="Create new room icon" class="icon icon--newRoom" /> Create new room
       </button>
+      <div class="btn rooms__search rooms__button">
+        <img src="../assets/search-icon.svg" alt="Search icon" class="search__icon" />
+        <input v-model="searchText" type="text" placeholder="Search room" class="search__input" />
+      </div>
     </div>
-    <ul v-if="roomsLoaded" class="rooms__list">
-      <li v-for="room in rooms" :key="room.id" class="room" :class="{ 'room--selected': room.id === selectedRoomId }">
-        <router-link :to="`/conversation/${room.id}`" class="room__link link">
-          <div class="room__details">
-            {{ room.roomName }}
-          </div>
-        </router-link>
-      </li>
-    </ul>
-    <div v-else class="rooms__emptylist">Brak kontaktów</div>
+    <div v-if="roomsLoaded" class="rooms">
+      <ul v-if="filteredRooms.length > 0" class="rooms__list">
+        <li
+          v-for="room in filteredRooms"
+          :key="room.id"
+          class="room"
+          :class="{ 'room--selected': room.id === selectedRoomId }"
+        >
+          <router-link :to="`/conversation/${room.id}`" class="room__link link">
+            <div class="room__details">
+              {{ room.roomName }}
+            </div>
+          </router-link>
+        </li>
+      </ul>
+      <div v-if="filteredRooms.length === 0" class="rooms__emptylist">room by that name not found</div>
+    </div>
+    <div v-else class="rooms__emptylist">No rooms, create a new one!</div>
     <div v-if="showCreateNewRoomComputed" class="rooms__create-new">
       <CreateNewRoom :owner="user" @close-modal="closeCreateNewRoom" />
     </div>
@@ -43,10 +55,22 @@ export default defineComponent({
     const { emit } = getCurrentInstance()
     const showCreateNewRoom = ref(false)
     const user = userStore.user
+    const searchText = ref('')
 
     onMounted(async () => {
       await userStore.fetchRoomsDetails(userStore.rooms)
       roomsLoaded.value = true
+    })
+    const filteredRooms = computed(() => {
+      if (!searchText.value) {
+        return rooms.value
+      } else {
+        const lowerCaseSearchText = searchText.value.toLowerCase()
+        return rooms.value.filter((room) => {
+          const displayName = room.roomName.toLowerCase()
+          return displayName.includes(lowerCaseSearchText)
+        })
+      }
     })
     const emitSelectedRoom = () => {
       emit('selected-room', selectedRoomId.value)
@@ -87,6 +111,8 @@ export default defineComponent({
       user,
       updateRooms,
       logout,
+      searchText,
+      filteredRooms,
     }
   },
 })
@@ -100,7 +126,32 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   align-items: center;
+  &__search {
+    display: flex;
+    align-self: center;
+    .search {
+      &__input {
+        width: 230px;
+        margin-left: 20px;
+        border-style: none;
+        border-radius: 10px;
+        background-color: rgba(255, 161, 122, 0);
 
+        &:hover {
+          background-color: rgba(255, 161, 122, 0);
+        }
+        &:focus {
+          outline: none;
+          background-color: rgba(255, 161, 122, 0);
+        }
+      }
+
+      &__icon {
+        width: 25px;
+        margin-left: 10px;
+      }
+    }
+  }
   &__list {
     list-style: none;
     padding-left: 5px;
